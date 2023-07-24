@@ -34,6 +34,13 @@ class UserResponse(BaseModel):
     user: UserDb
     detail: str = "User successfully created"
 
+class AccessUserUpdate(BaseModel):
+    roles: Role
+
+
+class RequestEmail(BaseModel):
+    email: EmailStr
+
 
 class TokenModel(BaseModel):
     access_token: str
