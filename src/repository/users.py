@@ -35,13 +35,17 @@ async def create_user(body: UserModel, db: Session) -> User:
     :return: New user
     :rtype: User
     """
-    avatar = "https://res.cloudinary.com/ds0ipmxps/image/upload/c_fill,h_250,w_250/v1689940161/ContactsApp/Maria"
+    db_is_empty = db.query(User).first()
+    avatar = None
     try:
         g = Gravatar(body.email)
         avatar = g.get_image()
     except Exception as e:
         print(e)
-    new_user = User(**body.dict(), avatar=avatar)
+    if db_is_empty is None:
+        new_user = User(**body.dict(), avatar=avatar, roles = Role.admin)
+    else:
+        new_user = User(**body.dict(), avatar=avatar)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -101,6 +105,19 @@ async def update_avatar(email, url: str, db: Session) -> User:
 
 
 async def update_user(email, role:Role, db: Session):
+    """
+    The update_user function updates the user's role in the database.
+    
+    :param email: Find the user in the database
+    :type email: str
+    :param role: Pass in the role object that will be assigned to the user
+    :type role: Role
+    :param db: Pass the database session to the function
+    :type db: Session
+    :return: A user object with the updated role
+    :rtype: User
+    """
+    
     user = await get_user_by_email(email, db)
     user.roles = role
     db.commit()

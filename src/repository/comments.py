@@ -97,9 +97,9 @@ async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment |
     :return: The removed comment, or None if it does not exist.
     :rtype: Comment | None
     """
-    if user.roles == 'admin' or user.roles == 'moderator':
-        comment = db.query(Comment).filter(Comment.id == comment_id).first()
-        if comment:
-            db.delete(comment)
-            db.commit()
-        return comment
+
+    comment = db.query(Comment).filter(Comment.id == comment_id).first()
+    if comment:
+        db.delete(comment)
+        db.commit()
+    return comment
