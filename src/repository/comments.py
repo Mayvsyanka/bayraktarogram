@@ -2,6 +2,8 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
+from sqlalchemy import and_
+
 from src.database.models import Comment, User, Photo
 from src.schemas import CommentModel
 
