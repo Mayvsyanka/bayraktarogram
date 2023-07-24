@@ -1,3 +1,4 @@
+
 """Module for supporting authorization and authentication operations"""
 
 from typing import Optional
