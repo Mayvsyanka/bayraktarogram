@@ -2,11 +2,14 @@ import enum
 from datetime import datetime
 from pydantic import BaseModel, Field
 
+from datetime import date, datetime
+
+from pydantic import BaseModel, Field, EmailStr
+
 class Role (enum.Enum):
     admin: str = 'admin'
     moderator: str = 'moderator'
     user: str = 'user'
-
 
 class CommentModel(BaseModel):
     content: str = Field(max_length=250)
