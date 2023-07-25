@@ -42,6 +42,7 @@ async def add_image(db: Session, image: ImageAddModel, tags: list[str], url: str
         if num_tags < 5:
             image_tags.append(tag.lower())
         num_tags += 1
+    message = ""
 
     if num_tags >= 5:
         message = "Only five tags can be added to an image"
@@ -70,7 +71,7 @@ async def update_image(db: Session, image_id, image: ImageUpdateModel, user: Use
     :return: An image object
     """
 
-    if user.role == Role.admin:
+    if user.roles == Role.admin:
         db_image = db.query(Image).filter(Image.id == image_id).first()
     else:
         db_image = db.query(Image).filter(Image.id == image_id, Image.user_id == user.id).first()
@@ -97,7 +98,7 @@ async def delete_image(db: Session, id: int, user: User):
     :return: A database object
     """
 
-    if user.role == Role.admin:
+    if user.roles == Role.admin:
         db_image = db.query(Image).filter(Image.id == id).first()
     else:
         db_image = db.query(Image).filter(Image.id == id, Image.user_id == user.id).first()
@@ -145,6 +146,7 @@ async def add_tag(db: Session, image_id, body: ImageAddTagModel, user: User):
 
     num_tags = 0
     list_tags = []
+    detail = ""
     for tag in tags:
         if tag:
             if len(tag) > 25:
@@ -164,7 +166,7 @@ async def add_tag(db: Session, image_id, body: ImageAddTagModel, user: User):
 
     tags = db.query(Tag).filter(Tag.name.in_(list_tags)).all()
 
-    if user.role == Role.admin:
+    if user.roles == Role.admin:
         image = db.query(Image).filter(Image.id == image_id).first()
     else:
         image = db.query(Image).filter(Image.id == image_id, Image.user_id == user.id).first()
@@ -194,7 +196,7 @@ async def get_image(db: Session, id: int, user: User):
     image = db.query(Image).filter(Image.id == id).first()
 
     if image:
-        comments = db.query(Comment).filter(Comment.image_id == image.id, Comment.user_id == user.id).all()
+        comments = db.query(Comment).filter(Comment.photo_id == image.id, Comment.user_id == user.id).all()
         return image, comments
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
@@ -215,6 +217,6 @@ async def get_images(db: Session, user: User):
 
     user_response = []
     for image in images:
-        comments = db.query(Comment).filter(Comment.image_id == image.id, Comment.user_id == user.id).all()
+        comments = db.query(Comment).filter(Comment.photo_id == image.id, Comment.user_id == user.id).all()
         user_response.append({"image": image, "comments": comments})
     return user_response

@@ -45,11 +45,7 @@ class Image(Base):
     tags = relationship("Tag", secondary=image_m2m_tag, backref="images")
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
-    comments = relationship('Comment', back_populates='author')
-
-# class Photo(Base)
-# -тут будет модель созданная другим членом команды - ее нужно замечить с коментами
-# comments = relationship('Comment', back_populates='author')
+    comments = relationship('Comment', back_populates='photo')
 
 
 class Comment(Base):

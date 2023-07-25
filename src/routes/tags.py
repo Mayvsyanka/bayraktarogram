@@ -28,7 +28,7 @@ async def create_tag(body: TagModel, db: Session = Depends(get_db),
     :return: A tagmodel object
     """
 
-    check_tag = await repository_tags.get_tags(body.name.lower(), db)
+    check_tag = await repository_tags.get_tag(body.name.lower(), db)
     if check_tag:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Tag already exist')
     tag = await repository_tags.create_tag(body, db)
@@ -103,7 +103,7 @@ async def delete_tag(tag_id: int, db: Session = Depends(get_db),
     :return: A tag object, which is the same as a post object
     """
     
-    tag = await repository_tags.delete_tag_tag(tag_id, db)
+    tag = await repository_tags.delete_tag(tag_id, db)
     if tag is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found")
     return tag
