@@ -50,7 +50,6 @@ class CommentModel(BaseModel):
     created_at: datetime
     updated_at: datetime
     user_id: int
-    user_role: str = Field(max_length=50)
     photo_id: int
 
 
