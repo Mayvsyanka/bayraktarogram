@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
-from src.database.models import User
+from src.database.models import User, Tag
 from src.schemas import TagModel, TagResponse
 from src.repository import tags as repository_tags
 from src.services.auth import auth_service
@@ -28,7 +28,7 @@ async def create_tag(body: TagModel, db: Session = Depends(get_db),
     :return: A tagmodel object
     """
 
-    check_tag = await repository_tags.get_tags(body.name.lower(), db)
+    check_tag = db.query(Tag).filter(Tag.name == body.name.lower()).first()
     if check_tag:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail='Tag already exist')
     tag = await repository_tags.create_tag(body, db)
@@ -103,7 +103,7 @@ async def delete_tag(tag_id: int, db: Session = Depends(get_db),
     :return: A tag object, which is the same as a post object
     """
     
-    tag = await repository_tags.delete_tag_tag(tag_id, db)
+    tag = await repository_tags.delete_tag(tag_id, db)
     if tag is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tag not found")
     return tag
