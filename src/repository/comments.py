@@ -4,11 +4,11 @@ from sqlalchemy.orm import Session
 
 from sqlalchemy import and_
 
-from src.database.models import Comment, User, Photo
+from src.database.models import Comment, User, Image
 from src.schemas import CommentModel
 
 
-async def get_comments(skip: int, limit: int,  photo: Photo, db: Session) -> List[Comment]:
+async def get_comments(skip: int, limit: int,  photo: Image, db: Session) -> List[Comment]:
     """
     Retrieves a list of comments for a specific photo with specified pagination parameters.
 
@@ -40,7 +40,7 @@ async def get_comment(comment_id: int, db: Session) -> Comment:
     return db.query(Comment).filter(Comment.id == comment_id).first()
 
 
-async def create_comment(body: CommentModel, user: User, photo: Photo, db: Session) -> Comment:
+async def create_comment(body: CommentModel, user: User, photo: Image, db: Session) -> Comment:
     """
     Creates a new comment for a specific photo.
 

@@ -1,6 +1,7 @@
 import enum
 from datetime import datetime
 from pydantic import BaseModel, Field
+from typing import List, Optional
 
 from datetime import date, datetime
 
@@ -58,3 +59,71 @@ class CommentResponse(CommentModel):
 
     class Config:
         orm_mode = True
+
+class TagModel(BaseModel):
+    name: str = Field(max_length=25)
+
+class TagResponse(TagModel):
+    id: int = 1
+    name: str
+
+    class Config:
+        orm_mode = True
+
+class ImageAddModel(BaseModel):
+    description: str = Field(max_length=500)
+    tags: Optional[List[str]]
+
+class ImageAddTagModel(BaseModel):
+    tags: Optional[List[str]]
+
+class ImageUpdateModel(BaseModel):
+    description: str = Field(max_length=500)
+
+class ImageDb(BaseModel):
+    id: int
+    url: str
+    description: str
+    tags: List[TagResponse]
+    user_id: int
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+        exclude = {'updated_at', 'user', 'public_name'}
+
+class ImageGetResponse(BaseModel):
+    image: ImageDb
+    comments: List[CommentResponse]
+
+class ImageAddResponse(BaseModel):
+    image: ImageDb
+    detail: str = "Image was successfully added"
+
+    class Config:
+        orm_mode = True
+
+class ImageUpdateDescrResponse(BaseModel):
+    id: int
+    description: str
+    detail: str = "Image was successfully updated"
+
+    class Config:
+        orm_mode = True
+
+class ImageDeleteResponse(BaseModel):
+    image: ImageDb
+    detail: str = "Image was successfully deleted"
+
+class ImageAddTagResponse(BaseModel):
+    id: int
+    tags: List[TagResponse]
+    detail: str = "Image was successfully updated"
+
+    class Config:
+        orm_mode = True
+
+class ImageGetAllResponse(BaseModel):
+    images: List[ImageGetResponse]
+
+

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from src.database.db import get_db
 from src.schemas import CommentModel, CommentResponse
 from src.repository import comments as repository_comments
-from src.database.models import Comment, User, Photo
+from src.database.models import Comment, User, Image
 from src.services.auth import auth_service
 from src.repository.images import get_image
 from src.services.roles import allowed_operation_mod_and_admin
