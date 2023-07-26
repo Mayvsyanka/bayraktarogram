@@ -18,6 +18,7 @@ class User(Base):
     refresh_token = Column(String(255), nullable=True)
     confirmed = Column(Boolean, default=False)
     roles = Column('roles', Enum(Role), default=Role.user)
+    access = Column(Boolean, default=True)
     comments = relationship('Comment', back_populates='author')
 
 image_m2m_tag = Table(
@@ -46,6 +47,7 @@ class Image(Base):
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
     comments = relationship('Comment', back_populates='photo')
+    transformated_images_settings = relationship("ImageSettings", back_populates='image')
 
 
 class Comment(Base):
@@ -58,3 +60,25 @@ class Comment(Base):
     author = relationship('User', back_populates='comments')
     photo_id = Column(Integer, ForeignKey('images.id'))
     photo = relationship('Image', back_populates='comments')
+
+
+class ImageSettings(Base):
+    __tablename__ = 'transformated_images_settings'
+    id = Column(Integer, primary_key=True)
+    url = Column(String(300), unique=True, index=True)
+    secure_url = Column(String(300), unique=True, index=True)
+    transformation_url = Column(String(300), unique=True, index=True)
+    radius = Column(Integer, nullable=False, default=0)
+    effect = Column(String(50), nullable=False, default='sepia')
+    width = Column(Integer, nullable=False, default=500)
+    height = Column(Integer, nullable=False, default=500)
+    gravity = Column(String(50), nullable=False, default='face')
+    crop = Column(String(50), nullable=False, default='fill')
+    color_space = Column(String(50), nullable=False, default='srgb')
+    user_id = Column('user_id', ForeignKey(
+        'users.id', ondelete='CASCADE'), default=None)
+    image_id = Column('image_id', ForeignKey(
+        'images.id', ondelete='CASCADE'), default=None)
+    image = relationship('Image', backref="transformated_images_settings")
+    created_at = Column('created_at', DateTime, default=func.now())
+    updated_at = Column('updated_at', DateTime, default=func.now())
