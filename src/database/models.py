@@ -13,7 +13,7 @@ class User(Base):
     username = Column(String(50))
     email = Column(String(250), nullable=False, unique=True)
     password = Column(String(255), nullable=False)
-    created_at = Column('crated_at', DateTime, default=func.now())
+    created_at = Column('created_at', DateTime, default=func.now())
     avatar = Column(String(255), nullable=True)
     refresh_token = Column(String(255), nullable=True)
     confirmed = Column(Boolean, default=False)
@@ -47,7 +47,7 @@ class Image(Base):
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
     comments = relationship('Comment', back_populates='photo')
-    transformated_images_settings = relationship("ImageSettings", back_populates='image')
+    settings = relationship("ImageSettings", back_populates='image')
 
 
 class Comment(Base):
@@ -68,6 +68,7 @@ class ImageSettings(Base):
     url = Column(String(300), unique=True, index=True)
     secure_url = Column(String(300), unique=True, index=True)
     transformation_url = Column(String(300), unique=True, index=True)
+    angle = Column(Integer, nullable=False, default=0)
     radius = Column(Integer, nullable=False, default=0)
     effect = Column(String(50), nullable=False, default='sepia')
     width = Column(Integer, nullable=False, default=500)
@@ -77,7 +78,7 @@ class ImageSettings(Base):
     color_space = Column(String(50), nullable=False, default='srgb')
     user_id = Column('user_id', ForeignKey(
         'users.id', ondelete='CASCADE'), default=None)
-    image_id = Column('image_id', ForeignKey(
+    new_image_id = Column('new_image_id', ForeignKey(
         'images.id', ondelete='CASCADE'), default=None)
     image = relationship('Image', backref="transformated_images_settings")
     created_at = Column('created_at', DateTime, default=func.now())
