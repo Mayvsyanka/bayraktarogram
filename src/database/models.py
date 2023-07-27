@@ -47,7 +47,7 @@ class Image(Base):
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
     comments = relationship('Comment', back_populates='photo')
-    settings = relationship("ImageSettings", back_populates='images')
+    settings = relationship("ImageSettings", back_populates='image')
 
 
 class Comment(Base):
