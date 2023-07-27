@@ -2,11 +2,13 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
-from src.database.models import Comment, User, Photo
+from sqlalchemy import and_
+
+from src.database.models import Comment, User, Image
 from src.schemas import CommentModel
 
 
-async def get_comments(skip: int, limit: int,  photo: Photo, db: Session) -> List[Comment]:
+async def get_comments(skip: int, limit: int,  photo: Image, db: Session) -> List[Comment]:
     """
     Retrieves a list of comments for a specific photo with specified pagination parameters.
 
@@ -38,7 +40,7 @@ async def get_comment(comment_id: int, db: Session) -> Comment:
     return db.query(Comment).filter(Comment.id == comment_id).first()
 
 
-async def create_comment(body: CommentModel, user: User, photo: Photo, db: Session) -> Comment:
+async def create_comment(body: CommentModel, user: User, photo: Image, db: Session) -> Comment:
     """
     Creates a new comment for a specific photo.
 
@@ -96,19 +98,16 @@ async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment |
     :return: The removed comment, or None if it does not exist.
     :rtype: Comment | None
     """
-<<<<<<< Updated upstream
     if user.roles == 'admin' or user.roles == 'moderator':
         comment = db.query(Comment).filter(Comment.id == comment_id).first()
         if comment:
             db.delete(comment)
             db.commit()
         return comment
-=======
+
 
     comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if comment:
-        if user.roles == 'admin' or user.roles == 'moderator':
-            db.delete(comment)
-            db.commit()
+        db.delete(comment)
+        db.commit()
     return comment
->>>>>>> Stashed changes
