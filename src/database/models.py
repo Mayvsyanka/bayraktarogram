@@ -60,5 +60,5 @@ class Comment(Base):
     updated_at = Column('updated_at', DateTime, default=func.now())
     user_id = Column('user_id', ForeignKey('users.id', ondelete='CASCADE'), default=None)
     author = relationship('User', back_populates='comments')
-    image_id = Column(Integer, ForeignKey('images.id'))
+    image_id = Column('image_id', ForeignKey('images.id', ondelete='CASCADE'), default=None)
     image = relationship('Image', back_populates='comments')
