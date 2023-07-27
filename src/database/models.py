@@ -20,10 +20,7 @@ class User(Base):
     roles = Column('roles', Enum(Role), default=Role.user)
     comments = relationship('Comment', back_populates='author')
 
-<<<<<<< Updated upstream
-# class Photo(Base)
-# -тут будет модель созданная другим членом команды - ее нужно замечить с коментами
-# comments = relationship('Comment', back_populates='author')
+
 =======
 image_m2m_tag = Table(
     "image_m2m_tag",
@@ -63,5 +60,5 @@ class Comment(Base):
     updated_at = Column('updated_at', DateTime, default=func.now())
     user_id = Column(Integer, ForeignKey('users.id'))
     author = relationship('User', back_populates='comments')
-    #photo_id = Column(Integer, ForeignKey('photo.id'))
-    #photo = relationship('Photo', back_populates='comments')
+    image_id = Column(Integer, ForeignKey('images.id'))
+    image = relationship('Image', back_populates='comments')
