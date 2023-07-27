@@ -21,7 +21,6 @@ class User(Base):
     comments = relationship('Comment', back_populates='author')
 
 
-=======
 image_m2m_tag = Table(
     "image_m2m_tag",
     Base.metadata,
@@ -49,7 +48,6 @@ class Image(Base):
     updated_at = Column('updated_at', DateTime, default=func.now())
     comments = relationship('Comment', back_populates='images')
     transformated_images_settings = relationship("ImageSettings", back_populates='images')
->>>>>>> Stashed changes
 
 
 class Comment(Base):
