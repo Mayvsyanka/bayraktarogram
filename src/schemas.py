@@ -19,7 +19,6 @@ class CommentModel(BaseModel):
 
 class CommentResponse(CommentModel):
     id: int
-    #user_id: int
 
     class Config:
         orm_mode = True
