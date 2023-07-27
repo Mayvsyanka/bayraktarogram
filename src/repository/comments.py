@@ -55,7 +55,7 @@ async def create_comment(body: CommentModel, user: User, photo: Image, db: Sessi
     :return: The newly created comment.
     :rtype: Comment
     """
-    comment = Comment(content = body.content, user_id = user.id, user_role = user.roles, photo_id = photo.id)
+    comment = Comment(content = body.content, user_id = user.id, photo_id = photo.id)
     db.add(comment)
     db.commit()
     db.refresh(comment)
@@ -77,7 +77,7 @@ async def update_comment(comment_id: int, body: CommentModel, user: User, db: Se
     :return: The updated comment, or None if it does not exist.
     :rtype: Comment | None
     """
-    comment = db.query(Comment).filter(and_(Comment.id == comment_id, Comment.user_id == user.id)).first()
+    comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if comment:
         if user.id == body.user_id:
             comment.content = body.content
@@ -105,6 +105,13 @@ async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment |
             db.commit()
         return comment
 
+
+    if user.roles == 'admin' or user.roles == 'moderator':
+        comment = db.query(Comment).filter(Comment.id == comment_id).first()
+        if comment:
+            db.delete(comment)
+            db.commit()
+        return comment
 
     comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if comment:

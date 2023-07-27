@@ -11,6 +11,7 @@ from src.repository import users as repository_users
 from src.services.auth import auth_service
 from src.schemas import UserDb
 from src.conf.config import settings
+from src.services.roles import allowed_operation_admin
 
 router = APIRouter(prefix="/users", tags=["users"])
 
