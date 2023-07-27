@@ -14,7 +14,7 @@ class CommentModel(BaseModel):
     updated_at: datetime
     user_id: int
     user_role: str = Field(max_length=50)
-    photo_id = int
+    image_id: int
 
 
 class CommentResponse(CommentModel):
