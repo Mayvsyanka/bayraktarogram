@@ -46,8 +46,10 @@ class Image(Base):
     tags = relationship("Tag", secondary=image_m2m_tag, backref="images")
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
-    comments = relationship('Comment', back_populates='photo')
-    settings = relationship("ImageSettings", back_populates='image')
+
+    comments = relationship('Comment', back_populates='image')
+    transformated_images_settings = relationship("ImageSettings", back_populates='image')
+
 
 
 class Comment(Base):
@@ -56,10 +58,11 @@ class Comment(Base):
     content = Column(String(250))
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column('user_id', Integer, ForeignKey('users.id', ondelete='CASCADE'))
     author = relationship('User', back_populates='comments')
-    photo_id = Column(Integer, ForeignKey('images.id'))
-    photo = relationship('Image', back_populates='comments')
+    image_id = Column('image_id', Integer, ForeignKey('images.id', ondelete='CASCADE'))
+    image = relationship('Image', back_populates='comments')
+
 
 
 class ImageSettings(Base):
@@ -81,6 +84,6 @@ class ImageSettings(Base):
         'users.id', ondelete='CASCADE'), default=None)
     new_image_id = Column('new_image_id', ForeignKey(
         'images.id', ondelete='CASCADE'), default=None)
-    image = relationship('Image', backref="transformated_images_settings")
+    image = relationship('Image', backref="images_settings")
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
