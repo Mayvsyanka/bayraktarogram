@@ -47,7 +47,7 @@ class Image(Base):
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
 
-    comments = relationship('Comment', back_populates='images')
+    comments = relationship('Comment', back_populates='image')
     transformated_images_settings = relationship("ImageSettings", back_populates='image')
 
 
@@ -82,6 +82,6 @@ class ImageSettings(Base):
         'users.id', ondelete='CASCADE'), default=None)
     image_id = Column('image_id', ForeignKey(
         'images.id', ondelete='CASCADE'), default=None)
-    image = relationship('Image', backref="transformated_images_settings")
+    image = relationship('Image', backref="images_settings")
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
