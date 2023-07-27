@@ -58,7 +58,7 @@ class Comment(Base):
     content = Column(String(250))
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column('user_id', ForeignKey('users.id', ondelete='CASCADE'), default=None)
     author = relationship('User', back_populates='comments')
     image_id = Column(Integer, ForeignKey('images.id'))
     image = relationship('Image', back_populates='comments')
