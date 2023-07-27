@@ -122,3 +122,9 @@ async def update_user(email, role:Role, db: Session):
     user.roles = role
     db.commit()
     return(user)
+
+async def block_user(email:str, db:Session):
+    user = await get_user_by_email(email, db)
+    user.access = False
+    db.commit()
+    return (f"User {email} is banned now")

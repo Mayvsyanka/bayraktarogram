@@ -11,6 +11,7 @@ from src.repository import users as repository_users
 from src.services.auth import auth_service
 from src.schemas import UserDb
 from src.conf.config import settings
+from src.services.roles import allowed_operation_admin
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -58,3 +59,10 @@ async def update_avatar_user(file: UploadFile = File(), current_user: User = Dep
                         .build_url(width=250, height=250, crop='fill', version=r.get('version'))
     user = await repository_users.update_avatar(current_user.email, src_url, db)
     return user
+
+
+@router.put("/block_user", dependencies=[Depends(allowed_operation_admin)])
+async def block_user(email: str, current_user: User = Depends(auth_service.get_current_user),
+                     db: Session = Depends(get_db)):
+    user = await repository_users.block_user(email, current_user, db)
+    return(user)
