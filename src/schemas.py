@@ -51,12 +51,12 @@ class CommentModel(BaseModel):
     updated_at: datetime
     user_id: int
     user_role: str = Field(max_length=50)
-    photo_id: int
+    image_id: int
+
 
 
 class CommentResponse(CommentModel):
     id: int
-    #user_id: int
 
     class Config:
         orm_mode = True
@@ -126,5 +126,4 @@ class ImageAddTagResponse(BaseModel):
 
 class ImageGetAllResponse(BaseModel):
     images: List[ImageGetResponse]
-
 
