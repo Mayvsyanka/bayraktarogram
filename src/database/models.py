@@ -20,9 +20,36 @@ class User(Base):
     roles = Column('roles', Enum(Role), default=Role.user)
     comments = relationship('Comment', back_populates='author')
 
-# class Photo(Base)
-# -тут будет модель созданная другим членом команды - ее нужно замечить с коментами
-# comments = relationship('Comment', back_populates='author')
+
+=======
+image_m2m_tag = Table(
+    "image_m2m_tag",
+    Base.metadata,
+    Column("id", Integer, primary_key=True),
+    Column("image_id", Integer, ForeignKey("images.id", ondelete="CASCADE")),
+    Column("tag_id", Integer, ForeignKey("tags.id", ondelete="CASCADE")),
+)
+
+class Tag(Base):
+    __tablename__ = "tags"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(25), nullable=False, unique=True)
+
+class Image(Base):
+    __tablename__ = "images"
+
+    id = Column(Integer, primary_key=True, index=True)
+    url = Column(String(300), unique=True, index=True)
+    description = Column(String(500), nullable=True)
+    public_name = Column(String(), unique=True)
+    user_id = Column('user_id', ForeignKey('users.id', ondelete='CASCADE'), default=None)
+    user = relationship('User', backref="images")
+    tags = relationship("Tag", secondary=image_m2m_tag, backref="images")
+    created_at = Column('created_at', DateTime, default=func.now())
+    updated_at = Column('updated_at', DateTime, default=func.now())
+    comments = relationship('Comment', back_populates='images')
+    transformated_images_settings = relationship("ImageSettings", back_populates='images')
+>>>>>>> Stashed changes
 
 
 class Comment(Base):
@@ -31,7 +58,7 @@ class Comment(Base):
     content = Column(String(250))
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column('user_id', Integer, ForeignKey('users.id', ondelete='CASCADE'))
     author = relationship('User', back_populates='comments')
-    #photo_id = Column(Integer, ForeignKey('photo.id'))
-    #photo = relationship('Photo', back_populates='comments')
+    image_id = Column('image_id', Integer, ForeignKey('images.id', ondelete='CASCADE'))
+    image = relationship('Image', back_populates='comments')
