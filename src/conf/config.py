@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     mail_server: str
     cloudinary_name: str
     cloudinary_api_key: str
-    cloudinary_api_secret: str
+    cloudinary_api_secret: str 
 
     class Config:
         env_file = ".env"

@@ -23,7 +23,7 @@ class UserDb(BaseModel):
     id: int
     username: str
     email: str
-    created_at: datetime
+    crated_at: datetime
     avatar: str
     roles: Role
 
