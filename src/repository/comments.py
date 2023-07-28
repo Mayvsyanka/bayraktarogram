@@ -23,7 +23,7 @@ async def get_comments(skip: int, limit: int,  photo: Image, db: Session) -> Lis
     :return: A list of comments.
     :rtype: List[Comment]
     """
-    return db.query(Comment).filter(Comment.photo_id == photo.id).offset(skip).limit(limit).all()
+    return db.query(Comment).filter(Comment.image_id == photo.id).offset(skip).limit(limit).all()
 
 
 async def get_comment(comment_id: int, db: Session) -> Comment:
@@ -55,7 +55,7 @@ async def create_comment(body: CommentModel, user: User, photo: Image, db: Sessi
     :return: The newly created comment.
     :rtype: Comment
     """
-    comment = Comment(content = body.content, user_id = user.id, photo_id = photo.id)
+    comment = Comment(content = body.content, user_id = user.id, image_id = photo.id)
     db.add(comment)
     db.commit()
     db.refresh(comment)
