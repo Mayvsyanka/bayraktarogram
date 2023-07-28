@@ -47,10 +47,7 @@ class TokenModel(BaseModel):
 
 class CommentModel(BaseModel):
     content: str = Field(max_length=250)
-    created_at: datetime
-    updated_at: datetime
     user_id: int
-    user_role: str = Field(max_length=50)
     image_id: int
 
 
