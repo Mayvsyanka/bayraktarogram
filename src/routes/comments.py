@@ -34,7 +34,7 @@ async def read_comment(comment_id: int, db: Session = Depends(get_db),
 @router.post("/", response_model=CommentResponse)
 async def create_comment(body: CommentModel, db: Session = Depends(get_db),
                     current_user: User = Depends(auth_service.get_current_user)):
-    photo, _ = await get_image(db, body.photo_id, current_user)
+    photo, _ = await get_image(db, body.image_id, current_user)
     return await repository_comments.create_comment(body, current_user, photo, db)
 
 
