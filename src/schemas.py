@@ -12,6 +12,9 @@ class Role (enum.Enum):
     moderator: str = 'moderator'
     user: str = 'user'
 
+class UpdateAccess(BaseModel):
+    user_email: str
+    user_role: Role
 
 class UserModel(BaseModel):
     username: str = Field(min_length=3, max_length=16)

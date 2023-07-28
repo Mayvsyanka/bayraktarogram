@@ -8,6 +8,7 @@ from src.services.auth import auth_service
 from src.schemas import UserDb
 from src.conf.config import settings
 from src.services.roles import allowed_operation_admin
+from src.schemas import Role
 
 router = APIRouter(prefix="/access", tags=["access"])
 
@@ -26,8 +27,9 @@ async def unblock_user(email: str, current_user: User = Depends(auth_service.get
     return (user)
 
 
-@router.put("/{contact_id}", response_model=UserDb, dependencies=[Depends(allowed_operation_admin)])
-async def update_access(user_email: str, new_role:str, user: User=Depends(auth_service.get_current_user), db: Session=Depends(get_db)):
+@router.put("/{contact_id}", response_model=UserDb ,dependencies=[Depends(allowed_operation_admin)])
+async def update_access(user_email: str, new_role:Role, user: User=Depends(auth_service.get_current_user), db: Session=Depends(get_db)):
+
     """
     The update_access function updates the role of a user in the database.
     
