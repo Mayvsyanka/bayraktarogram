@@ -47,15 +47,13 @@ class TokenModel(BaseModel):
 
 class CommentModel(BaseModel):
     content: str = Field(max_length=250)
-    created_at: datetime
-    updated_at: datetime
     user_id: int
-    photo_id: int
+    image_id: int
+
 
 
 class CommentResponse(CommentModel):
     id: int
-    #user_id: int
 
     class Config:
         orm_mode = True
@@ -125,5 +123,4 @@ class ImageAddTagResponse(BaseModel):
 
 class ImageGetAllResponse(BaseModel):
     images: List[ImageGetResponse]
-
 

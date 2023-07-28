@@ -196,7 +196,7 @@ async def get_image(db: Session, id: int, user: User):
     image = db.query(Image).filter(Image.id == id).first()
 
     if image:
-        comments = db.query(Comment).filter(Comment.photo_id == image.id, Comment.user_id == user.id).all()
+        comments = db.query(Comment).filter(Comment.image_id == image.id, Comment.user_id == user.id).all()
         return image, comments
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
@@ -217,6 +217,6 @@ async def get_images(db: Session, user: User):
 
     user_response = []
     for image in images:
-        comments = db.query(Comment).filter(Comment.photo_id == image.id, Comment.user_id == user.id).all()
+        comments = db.query(Comment).filter(Comment.image_id == image.id, Comment.user_id == user.id).all()
         user_response.append({"image": image, "comments": comments})
     return user_response

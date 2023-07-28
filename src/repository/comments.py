@@ -23,7 +23,7 @@ async def get_comments(skip: int, limit: int,  photo: Image, db: Session) -> Lis
     :return: A list of comments.
     :rtype: List[Comment]
     """
-    return db.query(Comment).filter(Comment.photo_id == photo.id).offset(skip).limit(limit).all()
+    return db.query(Comment).filter(Comment.image_id == photo.id).offset(skip).limit(limit).all()
 
 
 async def get_comment(comment_id: int, db: Session) -> Comment:
@@ -55,7 +55,7 @@ async def create_comment(body: CommentModel, user: User, photo: Image, db: Sessi
     :return: The newly created comment.
     :rtype: Comment
     """
-    comment = Comment(content = body.content, user_id = user.id, photo_id = photo.id)
+    comment = Comment(content = body.content, user_id = user.id, image_id = photo.id)
     db.add(comment)
     db.commit()
     db.refresh(comment)
@@ -79,8 +79,9 @@ async def update_comment(comment_id: int, body: CommentModel, user: User, db: Se
     """
     comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if comment:
-        comment.content = body.content
-        db.commit()
+        if user.id == body.user_id:
+            comment.content = body.content
+            db.commit()
     return comment
 
 
@@ -97,6 +98,20 @@ async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment |
     :return: The removed comment, or None if it does not exist.
     :rtype: Comment | None
     """
+    if user.roles == 'admin' or user.roles == 'moderator':
+        comment = db.query(Comment).filter(Comment.id == comment_id).first()
+        if comment:
+            db.delete(comment)
+            db.commit()
+        return comment
+
+
+    if user.roles == 'admin' or user.roles == 'moderator':
+        comment = db.query(Comment).filter(Comment.id == comment_id).first()
+        if comment:
+            db.delete(comment)
+            db.commit()
+        return comment
 
     comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if comment:

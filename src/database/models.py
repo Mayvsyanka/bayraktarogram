@@ -13,7 +13,7 @@ class User(Base):
     username = Column(String(50))
     email = Column(String(250), nullable=False, unique=True)
     password = Column(String(255), nullable=False)
-    created_at = Column('crated_at', DateTime, default=func.now())
+    crated_at = Column('crated_at', DateTime, default=func.now())
     avatar = Column(String(255), nullable=True)
     refresh_token = Column(String(255), nullable=True)
     confirmed = Column(Boolean, default=False)
@@ -46,8 +46,10 @@ class Image(Base):
     tags = relationship("Tag", secondary=image_m2m_tag, backref="images")
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
-    comments = relationship('Comment', back_populates='photo')
+
+    comments = relationship('Comment', back_populates='image')
     transformated_images_settings = relationship("ImageSettings", back_populates='image')
+
 
 
 class Comment(Base):
@@ -56,10 +58,11 @@ class Comment(Base):
     content = Column(String(250))
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
-    user_id = Column(Integer, ForeignKey('users.id'))
+    user_id = Column('user_id', Integer, ForeignKey('users.id', ondelete='CASCADE'))
     author = relationship('User', back_populates='comments')
-    photo_id = Column(Integer, ForeignKey('images.id'))
-    photo = relationship('Image', back_populates='comments')
+    image_id = Column('image_id', Integer, ForeignKey('images.id', ondelete='CASCADE'))
+    image = relationship('Image', back_populates='comments')
+
 
 
 class ImageSettings(Base):
@@ -67,7 +70,9 @@ class ImageSettings(Base):
     id = Column(Integer, primary_key=True)
     url = Column(String(300), unique=True, index=True)
     secure_url = Column(String(300), unique=True, index=True)
-    transformation_url = Column(String(300), unique=True, index=True)
+    transformed_url = Column(String(300), unique=True, index=True)
+    qrcode_url = Column(String(300), unique=True, index=True)
+    angle = Column(Integer, nullable=False, default=0)
     radius = Column(Integer, nullable=False, default=0)
     effect = Column(String(50), nullable=False, default='sepia')
     width = Column(Integer, nullable=False, default=500)
@@ -77,8 +82,8 @@ class ImageSettings(Base):
     color_space = Column(String(50), nullable=False, default='srgb')
     user_id = Column('user_id', ForeignKey(
         'users.id', ondelete='CASCADE'), default=None)
-    image_id = Column('image_id', ForeignKey(
+    new_image_id = Column('new_image_id', ForeignKey(
         'images.id', ondelete='CASCADE'), default=None)
-    image = relationship('Image', backref="transformated_images_settings")
+    image = relationship('Image', backref="images_settings")
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
