@@ -47,9 +47,9 @@ async def update_avatar_user(file: UploadFile = File(), current_user: User = Dep
     :rtype: User
     """
     cloudinary.config(
-        cloud_name=settings.cloudinary_name,
-        api_key=settings.cloudinary_api_key,
-        api_secret=settings.cloudinary_api_secret,
+        cloud_name=settings.cloud_name,
+        api_key=settings.api_key,
+        api_secret=settings.api_secret,
         secure=True
     )
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, func, Table, UniqueConstraint, Enum
+from sqlalchemy import Column, Integer, String, Boolean, func, Table, UniqueConstraint, Enum, PickleType
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
@@ -64,22 +64,14 @@ class Comment(Base):
     image = relationship('Image', back_populates='comments')
 
 
-
 class ImageSettings(Base):
+
     __tablename__ = 'transformated_images_settings'
     id = Column(Integer, primary_key=True)
     url = Column(String(300), unique=True, index=True)
     secure_url = Column(String(300), unique=True, index=True)
     transformed_url = Column(String(300), unique=True, index=True)
     qrcode_url = Column(String(300), unique=True, index=True)
-    angle = Column(Integer, nullable=False, default=0)
-    radius = Column(Integer, nullable=False, default=0)
-    effect = Column(String(50), nullable=False, default='sepia')
-    width = Column(Integer, nullable=False, default=500)
-    height = Column(Integer, nullable=False, default=500)
-    gravity = Column(String(50), nullable=False, default='face')
-    crop = Column(String(50), nullable=False, default='fill')
-    color_space = Column(String(50), nullable=False, default='srgb')
     user_id = Column('user_id', ForeignKey(
         'users.id', ondelete='CASCADE'), default=None)
     new_image_id = Column('new_image_id', ForeignKey(
