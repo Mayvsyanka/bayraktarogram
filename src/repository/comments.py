@@ -81,6 +81,7 @@ async def update_comment(comment_id: int, body: CommentModel, user: User, db: Se
     if comment:
         if user.id == body.user_id:
             comment.content = body.content
+            comment.updated_at = func.now()
             db.commit()
     return comment
 
@@ -106,8 +107,3 @@ async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment |
         return comment
 
 
-    comment = db.query(Comment).filter(Comment.id == comment_id).first()
-    if comment:
-        db.delete(comment)
-        db.commit()
-    return comment
