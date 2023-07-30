@@ -14,21 +14,21 @@ router = APIRouter(prefix="/access", tags=["access"])
 
 
 @router.put("/block_user", dependencies=[Depends(allowed_operation_admin)])
-async def block_user(email: str, current_user: User = Depends(auth_service.get_current_user),
-                     db: Session = Depends(get_db)):
-    user = await repository_access.block_user(email, db)
-    return (user)
-
-
-@router.put("/unblock_user", dependencies=[Depends(allowed_operation_admin)])
 async def unblock_user(email: str, current_user: User = Depends(auth_service.get_current_user),
-                       db: Session = Depends(get_db)):
+                     db: Session = Depends(get_db)):
     user = await repository_access.unblock_user(email, db)
     return (user)
 
 
-@router.put("/{contact_id}", response_model=UserDb ,dependencies=[Depends(allowed_operation_admin)])
-async def update_access(user_email: str, new_role:Role, user: User=Depends(auth_service.get_current_user), db: Session=Depends(get_db)):
+@router.put("/unblock_user", dependencies=[Depends(allowed_operation_admin)])
+async def block_user(email: str, current_user: User = Depends(auth_service.get_current_user),
+                       db: Session = Depends(get_db)):
+    user = await repository_access.block_user(email, db)
+    return (user)
+
+
+@router.put("/{contact_id}", response_model=UserDb, dependencies=[Depends(allowed_operation_admin)])
+async def update_access(user_email: str, new_role:str, user: User=Depends(auth_service.get_current_user), db: Session=Depends(get_db)):
 
     """
     The update_access function updates the role of a user in the database.

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, func, Table, UniqueConstraint, Enum
+from sqlalchemy import Column, Integer, String, Boolean, func, Table, UniqueConstraint, Enum, PickleType
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
@@ -10,8 +10,10 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    username = Column(String(50))
+    username = Column(String(50), unique=True)
     email = Column(String(250), nullable=False, unique=True)
+    bio = Column(String(500))
+    location = Column(String(500))
     password = Column(String(255), nullable=False)
     crated_at = Column('crated_at', DateTime, default=func.now())
     avatar = Column(String(255), nullable=True)
@@ -64,14 +66,14 @@ class Comment(Base):
     image = relationship('Image', back_populates='comments')
 
 
-
 class ImageSettings(Base):
+
     __tablename__ = 'transformated_images_settings'
     id = Column(Integer, primary_key=True)
-    url = Column(String(300), unique=True, index=True)
-    secure_url = Column(String(300), unique=True, index=True)
-    transformed_url = Column(String(300), unique=True, index=True)
-    qrcode_url = Column(String(300), unique=True, index=True)
+    url = Column(String(300), unique=False, index=True)
+    secure_url = Column(String(300), unique=False, index=True)
+    transformed_url = Column(String(300), unique=False, index=True)
+    qrcode_url = Column(String(300), unique=False, index=True)
     user_id = Column('user_id', ForeignKey(
         'users.id', ondelete='CASCADE'), default=None)
     new_image_id = Column('new_image_id', ForeignKey(

@@ -35,4 +35,5 @@ async def unblock_user(email: str, db: Session):
     user = await get_user_by_email(email, db)
     user.access = True
     db.commit()
-    return (f"User {email} is unbanned now")
+    return (f"User {email} is not banned now")
+
