@@ -12,9 +12,11 @@ class Role (enum.Enum):
     moderator: str = 'moderator'
     user: str = 'user'
 
+
 class UpdateUser(BaseModel):
     bio: str = Field(max_length=500)
     location: str = Field(max_length=100)
+
 
 class UserModel(BaseModel):
     username: str = Field(min_length=3, max_length=16)

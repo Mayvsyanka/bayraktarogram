@@ -12,9 +12,11 @@ class Settings(BaseSettings):
     mail_from: str
     mail_port: int
     mail_server: str
+
     cloud_name: str
     api_key: str
     api_secret: str
+
 
     class Config:
         env_file = ".env"
