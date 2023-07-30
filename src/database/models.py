@@ -72,14 +72,6 @@ class ImageSettings(Base):
     secure_url = Column(String(300), unique=True, index=True)
     transformed_url = Column(String(300), unique=True, index=True)
     qrcode_url = Column(String(300), unique=True, index=True)
-    angle = Column(Integer, nullable=False, default=0)
-    radius = Column(Integer, nullable=False, default=0)
-    effect = Column(String(50), nullable=False, default='sepia')
-    width = Column(Integer, nullable=False, default=500)
-    height = Column(Integer, nullable=False, default=500)
-    gravity = Column(String(50), nullable=False, default='face')
-    crop = Column(String(50), nullable=False, default='fill')
-    color_space = Column(String(50), nullable=False, default='srgb')
     user_id = Column('user_id', ForeignKey(
         'users.id', ondelete='CASCADE'), default=None)
     new_image_id = Column('new_image_id', ForeignKey(
