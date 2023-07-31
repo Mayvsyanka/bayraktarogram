@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routes import auth, users, comments, tags, images, access, transform_photo
+
+from src.routes import auth, users, comments, tags, images, access, ratings, transform_photo
 from src.conf.config import settings
 
 app = FastAPI()
@@ -13,6 +14,7 @@ app.include_router(comments.router, prefix='/api')
 app.include_router(access.router, prefix='/api')
 app.include_router(tags.router, prefix='/api')
 app.include_router(images.router, prefix='/api')
+app.include_router(ratings.router, prefix='/api')
 
 @app.get("/", tags=["Root"])
 def read_root():
