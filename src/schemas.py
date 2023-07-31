@@ -12,13 +12,17 @@ class Role (enum.Enum):
     moderator: str = 'moderator'
     user: str = 'user'
 
-class UpdateAccess(BaseModel):
-    user_email: str
-    user_role: Role
+
+class UpdateUser(BaseModel):
+    bio: str = Field(max_length=500)
+    location: str = Field(max_length=100)
+
 
 class UserModel(BaseModel):
     username: str = Field(min_length=3, max_length=16)
     email: str
+    bio: str = Field(max_length=500)
+    location: str = Field(max_length=100)
     password: str = Field(min_length=6, max_length=10)
 
 
@@ -28,11 +32,21 @@ class UserDb(BaseModel):
     email: str
     crated_at: datetime
     avatar: str
+    bio: str = Field(max_length=500)
+    location: str = Field(max_length=100)
     roles: Role
 
     class Config:
         orm_mode = True
 
+class Profile(BaseModel):
+    username: str
+    email: str
+    crated_at: datetime
+    avatar: str
+    bio: str = Field(max_length=500)
+    location: str = Field(max_length=100)
+    images: int
 
 class UserResponse(BaseModel):
     user: UserDb
@@ -151,5 +165,48 @@ class AverageRatingResponse(BaseModel):
     average_rating: float = 0.0
  
     class Config:
+        orm_mode = True
+
+
+
+class ImageSettingsModel (BaseModel):  # for Cloudinary
+    # relations
+    user_id: int = Field(..., example=1)
+    image_id: int = Field(..., example=1)
+    # url
+    url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    secure_url: str = Field(
+        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    transformed_url: str = Field(
+        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    qrcode_url: str = Field(
+        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    # settings
+    radius: int = Field(..., example=100)
+    effect: str = Field(..., example="sepia")
+    width: int = Field(..., example=500)
+    height: int = Field(..., example=500)
+    crop: str = Field(..., example="fill")
+    gravity: str = Field(..., example="face")
+    color_space: str = Field(..., example="srgb")
+    angle: int = Field(..., example=0)
+
+
+class ImageSettingsResponseModel (BaseModel):
+    user_id: int = Field(..., example=1)
+    transformed_url: str = Field(
+        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    qrcode_url: str = Field(
+        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+
+    class Config():
+        # This is for Swagger UI documentation
+        schema_extra = {
+            "example": {
+                "user_id": 1,
+                "image_url": "https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg"
+            }
+        }
+
         orm_mode = True
 
