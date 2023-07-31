@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.routes import auth, users, comments, roles, tags, images
+from src.routes import auth, users, comments, tags, images, transform_photo, access
 from src.conf.config import settings
 
 app = FastAPI()

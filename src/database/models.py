@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String, Boolean, func, Table, UniqueConstraint, Enum
+from sqlalchemy import Column, Integer, String, Boolean, func, Table, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from src.schemas import Role
+from typing import List
 
 Base = declarative_base()
 
@@ -66,27 +67,19 @@ class Comment(Base):
 
 
 class ImageSettings(Base):
-    
     __tablename__ = 'transformated_images_settings'
     id = Column(Integer, primary_key=True)
-    tablename = 'transformated_images_settings'
-    id = Column(Integer, primary_key=True)
-    url = Column(String(300), unique=True, index=True)
-    secure_url = Column(String(300), unique=True, index=True)
-    transformed_url = Column(String(300), unique=True, index=True)
-    qrcode_url = Column(String(300), unique=True, index=True)
-    angle = Column(Integer, nullable=False, default=0)
-    radius = Column(Integer, nullable=False, default=0)
-    effect = Column(String(50), nullable=False, default='sepia')
-    width = Column(Integer, nullable=False, default=500)
-    height = Column(Integer, nullable=False, default=500)
-    gravity = Column(String(50), nullable=False, default='face')
-    crop = Column(String(50), nullable=False, default='fill')
-    color_space = Column(String(50), nullable=False, default='srgb')
+    #urls
+    url = Column(String(300), unique=False, index=True)
+    secure_url = Column(String(300), unique=False, index=True)
+    transformed_url = Column(String(300), unique=False, index=True)
+    qrcode_url = Column(String(300), unique=False, index=True)
+    # relations
     user_id = Column('user_id', ForeignKey(
         'users.id', ondelete='CASCADE'), default=None)
     new_image_id = Column('new_image_id', ForeignKey(
         'images.id', ondelete='CASCADE'), default=None)
     image = relationship('Image', backref="images_settings")
+    # datetimesstamp
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())

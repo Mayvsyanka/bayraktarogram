@@ -1,11 +1,8 @@
 import enum
 from datetime import datetime
-from pydantic import BaseModel, Field
-from typing import List, Optional
-
-from datetime import date, datetime
-
+from typing import Dict, List, Optional
 from pydantic import BaseModel, Field, EmailStr
+from pydantic.fields import FieldInfo, Undefined, Field
 
 class Role (enum.Enum):
     admin: str = 'admin'
@@ -124,40 +121,23 @@ class ImageAddTagResponse(BaseModel):
 class ImageGetAllResponse(BaseModel):
     images: List[ImageGetResponse]
 
-<<<<<<< Updated upstream
-=======
 
-class ImageSettingsModel (BaseModel): # for Cloudinary
+class ImageSettingsModel(BaseModel): # POST
     # relations
+    # id: int = Field(..., example=1)
     user_id: int = Field(..., example=1)
     image_id: int = Field(..., example=1)
-    # url
-    url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    secure_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    transformed_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    qrcode_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    # settings
-    radius: int = Field(..., example=100)
-    effect: str = Field(..., example="sepia")
-    width: int = Field(..., example=500)
-    height: int = Field(..., example=500)
-    crop: str = Field(..., example="fill")
-    gravity: str = Field(..., example="face")
-    color_space: str = Field(..., example="srgb")
-    angle: int = Field(..., example=0)
+
+    transformation: List[Dict[str, str]] = Field(..., example=[{"radius": "max"}, {"effect": "sepia"}, {"width": "500"}, {"height": "500"}, {"crop": "fill"}, {"gravity": "face"}, {"color_space": "srgb"}, {"angle": "0"}])    
    
-class ImageSettingsResponseModel (BaseModel):
-    user_id: int = Field(..., example=1)
+class ImageSettingsResponseModel(BaseModel): 
+    id: int = Field(..., example=1)
     transformed_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    qrcode_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    # qrcode_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
     class Config():
-        # This is for Swagger UI documentation
-        schema_extra = {
-            "example": {
-                "user_id": 1,
-                "image_url": "https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg"
-            }
-        }   
+        orm_mode = True 
         
-        orm_mode = True
->>>>>>> Stashed changes
+        
+        
+
+

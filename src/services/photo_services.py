@@ -15,6 +15,7 @@ import json
 # Import to generate a QR code
 
 import qrcode
+import uuid
 
 # Set configuration parameter: return "https" URLs by setting secure=True  
 # ==============================
@@ -25,7 +26,7 @@ config = cloudinary.config(secure=True)
 print("****1. Set up and configure the SDK:****\nCredentials: ", config.cloud_name, config.api_key, "\n")
 
 
-def uploadImage(src_url, public_name):
+def uploadImage(src_url, public_id):
     """
     The uploadImage function uploads an image to Cloudinary and returns the URL of the uploaded image.
         Args:
@@ -46,12 +47,15 @@ def uploadImage(src_url, public_name):
     # Upload the image. C:/Users/Oleg/OneDrive/GOIT_cloud/cloudinary-upload/src/images/front_face.jpg
     # Set the asset's public ID and allow overwriting the asset with new versions
     
-    cloudinary.uploader.upload(src_url, public_name=public_name, unique_filename = False, overwrite=True)
+    cloudinary.uploader.upload(src_url,
+                               public_id=public_id,
+                               unique_filename = False,
+                               overwrite=True)
     # cloudinary.uploader.upload("https://cloudinary-devs.github.io/cld-docs-assets/assets/images/butterfly.jpeg", public_name="quickstart_butterfly", unique_filename = False, overwrite=True)
     
     
     # Build the URL for the image and save it in the variable 'srcURL'
-    srcURL = cloudinary.CloudinaryImage(public_name).build_url()
+    srcURL = cloudinary.CloudinaryImage(public_id).build_url()
 
     # Log the image URL to the console. 
     # Copy this URL in a browser tab to generate the image on the fly.
@@ -59,7 +63,7 @@ def uploadImage(src_url, public_name):
     return srcURL
   
 
-def getAssetInfo(public_name):
+def getAssetInfo(public_id):
     """
     The getAssetInfo function gets and uses details of the image.
         It first gets image details and saves it in the variable 'image_info'.
@@ -75,31 +79,22 @@ def getAssetInfo(public_name):
     # ==============================
 
     # Get image details and save it in the variable 'image_info'.
-    image_info=cloudinary.api.resource(public_name)
+    image_info=cloudinary.api.resource(public_id)
     print("****3. Get and use details of the image****\nUpload response:\n", json.dumps(image_info,indent=2), "\n")
 
     # Assign tags to the uploaded image based on its width. Save the response to the update in the variable 'update_resp'.
     if image_info["width"]>900:
-        update_resp=cloudinary.api.update(public_name, tags = "large")
+        update_resp=cloudinary.api.update(public_id, tags = "large")
     elif image_info["width"]>500:
-        update_resp=cloudinary.api.update(public_name, tags = "medium")
+        update_resp=cloudinary.api.update(public_id, tags = "medium")
     else:
-        update_resp=cloudinary.api.update(public_name, tags = "small")
+        update_resp=cloudinary.api.update(public_id, tags = "small")
 
     # Log the new tag to the console.
     print("New tag: ", update_resp["tags"], "\n")
   
   
-def createImageTag(public_name,
-                   radius=0, 
-                   effect="sepia",
-                   width=500, 
-                   height=500,
-                   crop='fill',
-                   gravity='face', 
-                   color_space='srgb', 
-                   angle=0
-                   ):
+def createImageTag(public_id, transformation):
     """
     The createImageTag function takes in a public_name, and returns an image tag with transformations applied to the src URL.
         Args:
@@ -125,16 +120,7 @@ def createImageTag(public_name,
     # ==============================
 
     # Create an image tag with transformations applied to the src URL.
-    imageTag = cloudinary.CloudinaryImage(public_name).build_url(
-        radius,
-        effect,
-        width,
-        height,
-        crop,
-        gravity,
-        color_space,
-        angle,
-    )     
+    imageTag = cloudinary.CloudinaryImage(public_id).build_url(transformation=transformation)    
 
     #To return only the URL, and not the whole tag, replace build_url with image
     # imageTag = cloudinary.CloudinaryImage("quickstart_butterfly").build_url(radius="max", effect="sepia")
@@ -161,5 +147,28 @@ def create_qrcode(data): # data is a string
     # Encoding data using make() function
     img = qrcode.make(data)
     # Saving as an image file
-    file_name = 'qr_code.png' 
+    file_name = str(uuid.uuid4()) + '.png' 
     img.save(file_name)
+    return file_name
+       
+
+# Create qrcode
+def create_qrcode(data): # data is a string
+    """
+    The create_qrcode function takes a string as input and creates a QR code image file.
+        Args:
+            data (str): The string to be encoded in the QR code.
+    
+    
+    :param data: Pass in the data that is to be encoded
+    :return: None
+    :doc-author: Trelent
+    """
+    
+    # Data to be encoded data
+    # Encoding data using make() function
+    img = qrcode.make(data)
+    # Saving as an image file
+    file_name = str(uuid.uuid4()) + '.png' 
+    img.save(file_name)
+    return file_name

@@ -7,25 +7,46 @@ import qrcode
 
 
 
-async def get_transformated_url(db: Session, id: int, user: User):
+async def get_transformed_url(db: Session, id: int, user: User):
     """
-    The get_transformated_url function returns a transformated url by id
+    The get_transformed_url function returns the transformed url of an image with a given id.
+        The function takes in two parameters:
+            - db: A database session object that allows us to query the database for information.
+            - id: An integer representing the unique identifier of an image in our database.
+        The function returns a string containing the transformed url of an image with a given id.
     
     :param db: Session: Access the database
-    :param id: int: Get the id of the image settings that we want to update
-    :param user: User: Get the user id from the user object
-    :return: A transformated_url object
+    :param id: int: Get the id of the image settings object
+    :param user: User: Get the user id and check if the image belongs to that user
+    :return: A string, but the schema expects a transformedurl object
     :doc-author: Trelent
     """
-    transformated_url = db.query(ImageSettings).filter(ImageSettings.id == id, ImageSettings.user_id == user.id).first()
     
-    if not transformated_url:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Transformated url with id {id} not found")
+    transformed_url = db.query(ImageSettings).filter(ImageSettings.id == id).all()
+    temp = db.query(ImageSettings).filter().all()
+    
+    # print(f"transformed_url:{transformed_url.transformed_url}")
+    for i in temp:
+        print(i)
+    
+    # print(f"temp:{temp}")
+    # print(temp)
+    
+    # if not transformed_url:
+    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Transformated url with id {id} not found")
+    # else:
+    #     return transformed_url.id, transformed_url.transformed_url
+    
+    if transformed_url:
+        return transformed_url.transformed_url, transformed_url.id
     else:
-        return transformated_url
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Transformated url with id {id} not found")
     
 
-async def get_transformed_qrcode(db:Session, qrcode_url_id: int, current_user: User):
+
+
+
+async def get_transformed_qrcode(db:Session, qrcode_url_id: int, user: User):
         """
         The get_transformed_qrcode function returns a transformed qrcode image based on the user's input.
             The function takes in two parameters:
@@ -41,10 +62,16 @@ async def get_transformed_qrcode(db:Session, qrcode_url_id: int, current_user: U
         """
         qrcode_url = db.query(ImageSettings).filter(ImageSettings.id == qrcode_url_id, ImageSettings.user_id == current_user.id).first()
         
-        if not qrcode_url:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Qrcode url with id {qrcode_url_id} not found")
+        # if not qrcode_url:
+        #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Qrcode url with id {qrcode_url_id} not found")
+        # else:
+        #     return qrcode_url.transformed_url
+        
+        if qrcode_url:
+            return qrcode_url.qrcode_url
         else:
-            return qrcode_url 
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Qrcode url with id {qrcode_url_id} not found")
+        
         
 async def create_transformed_photo_url(body:ImageSettings, db: Session, current_user: User):
     """
@@ -66,38 +93,35 @@ async def create_transformed_photo_url(body:ImageSettings, db: Session, current_
     # Get the image url from the database (table Image)
     result = db.query(Image).filter(Image.id == body.image_id, Image.user_id == current_user.id).first()
     image_url = result.url
+    print(f'image_url from Image:', image_url)
     public_name = result.public_name
+    print(f'public_name from Image:', public_name)
     
-    # Build the URL for the image 
-    secure_url = uploadImage(image_url, public_name)
-    
-    # Create the transformed image url
-    transformation_url = createImageTag(public_id=public_name,
-                                        radius=body.radius,
-                                        effect=body.effect,
-                                        width=body.width,
-                                        height=body.height,
-                                        crop=body.crop,
-                                        gravity=body.gravity,
-                                        color_space=body.color_space,
-                                        angle=body.angle
-                                        )
-    
-    #create file qr_code.png with qrcode 
-    create_qrcode(transformation_url)
-    #qrcode's file path
-    qrcode_url = "D:/cloudinary_web//bayraktarogram/qr_code.png"
-    
-    #add urls to body
-    body.secure_url = secure_url
-    body.transformed_url = transformation_url
-    body.qrcode_url = qrcode_url
-
-    #add settings to body
-    image_settings = ImageSettings(**body.dict()) 
-    image_settings.user_id = current_user.id
-    #add settings to database
-    db.add(image_settings)
-    db.commit()
-    db.refresh(image_settings) 
-    return image_settings
+    if public_name is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Image with id {body.image_id} not found")   
+    else:
+        # Build the URL for the image 
+        secure_url = uploadImage(image_url, public_name)
+        # Get the image info 
+        getAssetInfo(public_name)
+        
+        # Create the transformed image url
+        transformation_url = createImageTag(public_name, transformation=body.transformation)
+        print(f'transformation_url:', transformation_url)
+        
+        
+        #create file qr_code.png with qrcode 
+        qrcode_file_name = create_qrcode(transformation_url)
+        #qrcode's file path
+        qrcode_url = "D:/cloudinary_web//bayraktarogram/"  + qrcode_file_name
+        # Create the transformed image urls
+        transformatiom_image = ImageSettings(url=image_url,
+                                             transformed_url=transformation_url,
+                                             qrcode_url=qrcode_url, 
+                                             secure_url=secure_url,
+                                             user_id=current_user.id)    
+        # Add the transformed image urls to the database                                                     
+        db.add(transformatiom_image)
+        db.commit()
+        db.refresh(transformatiom_image)
+        return transformatiom_image
