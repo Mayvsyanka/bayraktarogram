@@ -9,7 +9,7 @@ import cloudinary
 from cloudinary import uploader
 
 
-from src.schemas import ImageSettingsModel, ImageSettingsResponseModel
+from src.schemas import ImageSettingsModel, ImageSettingsQrcodeResponseModel, ImageSettingsResponseModel
 from sqlalchemy.orm import Session
 from src.database.db import get_db
 from src.database.models import ImageSettings, User
@@ -44,7 +44,7 @@ async def create_transformed_photo_url(body:ImageSettingsModel, db: Session = De
         api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
         secure=True
     )
-    return await transform_photo.create_transformed_photo_url(body, db, current_user) #await
+    return await transform_photo.create_transformed_photo_url(body, db, current_user) 
     
 
 @router.get('/transformations/{id}', response_model=ImageSettingsResponseModel, dependencies=[Depends(allowed_operation_everyone)])  #dependencies=[Depends(allowed_operation_everyone)
@@ -69,13 +69,13 @@ async def get_transformed_photos(id: int, db: Session = Depends(get_db),
     #     api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
     #     secure=True
     # )
+    transformed_url = await get_transformed_url(db, id, current_user)
+    # return {"transformed_url": transformed_url.transformed_url}
+    return {"id": transformed_url[0], "transformed_url": transformed_url[1]}
     
-    transformed_url = await get_transformed_url(db, id,  current_user)
-    return {"transformed_url_id": transformed_url.id, "transformed_url": transformed_url.transformed_url}
-
-
-@router.get('/transformations/{qrcode_url_id}', response_model=ImageSettingsResponseModel, dependencies=[Depends(get_db)]) 
-async def get_transformed_qrcode(qrcode_url_id: int, db: Session = Depends(get_db),current_user: User = Depends(auth_service.get_current_user)):
+    
+@router.get('/qrcode/{id}', response_model=ImageSettingsQrcodeResponseModel, dependencies=[Depends(get_db)]) 
+async def get_transformed_qrcode(id: int, db: Session = Depends(get_db),current_user: User = Depends(auth_service.get_current_user)):
     """
     The get_transformed_qrcode function returns the transformed qrcode_url of a given qrcode_url id.
             The function takes in an integer representing the id of a given qrcode_url and returns a dictionary containing 
@@ -98,8 +98,8 @@ async def get_transformed_qrcode(qrcode_url_id: int, db: Session = Depends(get_d
     :return: The following error:
     :doc-author: Trelent
     """
-    qrcode_url = await transform_photo.get_transformed_qrcode(db, qrcode_url_id, current_user)     
-    return {"qrcode_url_id": qrcode_url}
+    qrcode_url = await transform_photo.get_transformed_qrcode(db, id, current_user)     
+    return {"id": qrcode_url[0], "qrcode_url": qrcode_url[1]}
 
 
 

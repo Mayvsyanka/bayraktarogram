@@ -138,6 +138,11 @@ class ImageSettingsResponseModel(BaseModel):
         orm_mode = True 
         
         
-        
+class ImageSettingsQrcodeResponseModel(BaseModel): 
+    id: int = Field(..., example=1)
+    # transformed_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    qrcode_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    class Config():
+        orm_mode = True       
 
 

@@ -22,31 +22,21 @@ async def get_transformed_url(db: Session, id: int, user: User):
     :doc-author: Trelent
     """
     
-    transformed_url = db.query(ImageSettings).filter(ImageSettings.id == id).all()
-    temp = db.query(ImageSettings).filter().all()
-    
-    # print(f"transformed_url:{transformed_url.transformed_url}")
-    for i in temp:
-        print(i)
-    
-    # print(f"temp:{temp}")
-    # print(temp)
-    
+    transformed_url = db.query(ImageSettings).filter(ImageSettings.id == id).first()
+       
     # if not transformed_url:
     #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Transformated url with id {id} not found")
     # else:
     #     return transformed_url.id, transformed_url.transformed_url
     
     if transformed_url:
-        return transformed_url.transformed_url, transformed_url.id
+        return  transformed_url.id, transformed_url.transformed_url
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Transformated url with id {id} not found")
     
 
 
-
-
-async def get_transformed_qrcode(db:Session, qrcode_url_id: int, user: User):
+async def get_transformed_qrcode(db:Session, id: int, user: User):
         """
         The get_transformed_qrcode function returns a transformed qrcode image based on the user's input.
             The function takes in two parameters:
@@ -60,7 +50,7 @@ async def get_transformed_qrcode(db:Session, qrcode_url_id: int, user: User):
         :return: A single row from the database
         :doc-author: Trelent
         """
-        qrcode_url = db.query(ImageSettings).filter(ImageSettings.id == qrcode_url_id, ImageSettings.user_id == current_user.id).first()
+        qrcode_url = db.query(ImageSettings).filter(ImageSettings.id == id).first()
         
         # if not qrcode_url:
         #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Qrcode url with id {qrcode_url_id} not found")
@@ -68,9 +58,9 @@ async def get_transformed_qrcode(db:Session, qrcode_url_id: int, user: User):
         #     return qrcode_url.transformed_url
         
         if qrcode_url:
-            return qrcode_url.qrcode_url
+            return qrcode_url.id, qrcode_url.qrcode_url 
         else:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Qrcode url with id {qrcode_url_id} not found")
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Qrcode of the url with id {id} not found")
         
         
 async def create_transformed_photo_url(body:ImageSettings, db: Session, current_user: User):
