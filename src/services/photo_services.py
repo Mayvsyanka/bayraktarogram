@@ -92,7 +92,15 @@ def getAssetInfo(public_name):
   
   
 def createImageTag(public_name,
-                   transformation):
+                   radius=0, 
+                   effect="sepia",
+                   width=500, 
+                   height=500,
+                   crop='fill',
+                   gravity='face', 
+                   color_space='srgb', 
+                   angle=0
+                   ):
     """
     The createImageTag function takes in a public_name, and returns an image tag with transformations applied to the src URL.
         Args:
@@ -119,14 +127,14 @@ def createImageTag(public_name,
 
     # Create an image tag with transformations applied to the src URL.
     imageTag = cloudinary.CloudinaryImage(public_name).build_url(
-        transformation.radius,
-        transformation.effect,
-        transformation.width,
-        transformation.height,
-        transformation.crop,
-        transformation.gravity,
-        transformation.color_space,
-        transformation.angle,
+        radius,
+        effect,
+        width,
+        height,
+        crop,
+        gravity,
+        color_space,
+        angle,
     )     
 
     #To return only the URL, and not the whole tag, replace build_url with image

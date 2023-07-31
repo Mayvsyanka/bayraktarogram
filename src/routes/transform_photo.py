@@ -25,7 +25,7 @@ router = APIRouter(prefix='/transform_photo', tags=["transform_photo"])
 
 
 @router.post('/transformations/add', response_model=ImageSettingsResponseModel, status_code=status.HTTP_201_CREATED, dependencies=[Depends(allowed_operation_everyone)])
-async def create_transformed_photo_url(body: ImageSettingsModel, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
+async def create_transformed_photo_url(body:ImageSettingsModel, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     """
     The create_transformed_photo_url function creates a transformed photo url.
         The function takes in an ImageSettingsModel object and returns the transformed photo url.
@@ -36,22 +36,19 @@ async def create_transformed_photo_url(body: ImageSettingsModel, db: Session = D
     :param current_user: User: Get the current user's id
     :return: A string
     :doc-author: Trelent
-    """
+    """   
     cloudinary.config(
-        cloud_name=os.environ.get('CLOUD_NAME'),
-        api_key=os.environ.get('API_KEY'),
-        api_secret=os.environ.get('API_SECRET'),
+        cloud_name=os.environ.get('CLOUDINARY_NAME'),
+        api_key=os.environ.get('CLOUDINARY_API_KEY'),
+        api_secret=os.environ.get('CLOUDINARY_API_SECRET'),
         secure=True
     )
-
-    # await
+    
     return await transform_photo.create_transformed_photo_url(body, db, current_user)
+    
 
-
-# dependencies=[Depends(allowed_operation_everyone)
-@router.get('/transformations/{transformed_url_id}', response_model=ImageSettingsResponseModel, dependencies=[Depends(allowed_operation_everyone)])
-async def get_transformed_photos(transformed_url_id: int, db: Session = Depends(get_db),
-                                 current_user: User = Depends(auth_service.get_current_user)):
+@router.get('/transformations/{transformed_url_id}', response_model=ImageSettingsResponseModel, dependencies=[Depends(allowed_operation_everyone)]) 
+async def get_transformed_photos(transformed_url_id: int, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     """
     The get_transformed_photos function returns the transformed_url of a photo that has been uploaded to the database.
         The function takes in an integer, transformed_url_id, and uses it to query the database for a matching id. 
@@ -62,22 +59,14 @@ async def get_transformed_photos(transformed_url_id: int, db: Session = Depends(
     :param current_user: User: Get the current user
     :return: The transformed_url value
     :doc-author: Trelent
-    """
-    # config = cloudinary.config(secure=True)
-    cloudinary.config(
-        cloud_name=os.environ.get('CLOUD_NAME'),
-        api_key=os.environ.get('API_KEY'),
-        api_secret=os.environ.get('API_SECRET'),
-        secure=True
-    )
-
-    # get_transformed_qrcode
-    transformed_url = await transform_photo.get_transformed_url(db, transformed_url_id, current_user)
+    """    
+    config = cloudinary.config(secure=True) 
+    transformed_url = await transform_photo.get_transformed_photos(db, transformed_url_id, current_user)  
     return {"transformed_url_id": transformed_url}
 
 
-@router.get('/transformations/{qrcode_url_id}', response_model=ImageSettingsResponseModel, dependencies=[Depends(get_db)])
-async def get_transformed_qrcode(qrcode_url_id: int, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
+@router.get('/transformations/{qrcode_url_id}', response_model=ImageSettingsResponseModel, dependencies=[Depends(get_db)]) 
+async def get_transformed_qrcode(qrcode_url_id: int, db: Session = Depends(get_db),current_user: User = Depends(auth_service.get_current_user)):
     """
     The get_transformed_qrcode function returns the transformed qrcode_url of a given qrcode_url id.
         The function takes in an integer representing the id of a given qrcode_url and returns a dictionary containing 
@@ -89,13 +78,8 @@ async def get_transformed_qrcode(qrcode_url_id: int, db: Session = Depends(get_d
     :return: The following error:
     :doc-author: Trelent
     """
-    qrcode_url = await transform_photo.get_transformed_qrcode(db, qrcode_url_id, current_user)
+    qrcode_url = await transform_photo.get_transformed_qrcode(db, qrcode_url_id, current_user)     
     return {"qrcode_url_id": qrcode_url}
-
-
-
-
-
 
 
 
