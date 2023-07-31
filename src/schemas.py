@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from datetime import date, datetime
 
@@ -12,6 +12,10 @@ class Role (enum.Enum):
     moderator: str = 'moderator'
     user: str = 'user'
 
+
+class SortField(str, enum.Enum):
+    date = "date"
+    id = "id"
 
 class UpdateUser(BaseModel):
     bio: str = Field(max_length=500)
@@ -148,21 +152,8 @@ class ImageSettingsModel (BaseModel):  # for Cloudinary
     image_id: int = Field(..., example=1)
     # url
     url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    secure_url: str = Field(
-        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    transformed_url: str = Field(
-        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    qrcode_url: str = Field(
-        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    # settings
-    radius: int = Field(..., example=100)
-    effect: str = Field(..., example="sepia")
-    width: int = Field(..., example=500)
-    height: int = Field(..., example=500)
-    crop: str = Field(..., example="fill")
-    gravity: str = Field(..., example="face")
-    color_space: str = Field(..., example="srgb")
-    angle: int = Field(..., example=0)
+    transformation: List[Dict[str, str]] = Field(..., example=[{"radius": "max"}, {"effect": "sepia"}, {"width": "500"}, {
+                                                 "height": "500"}, {"crop": "fill"}, {"gravity": "face"}, {"color_space": "srgb"}, {"angle": "0"}])
 
 
 class ImageSettingsResponseModel (BaseModel):
