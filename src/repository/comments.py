@@ -85,10 +85,9 @@ async def update_comment(comment_id: int, body: CommentModel, user: User, db: Se
     return comment
 
 
-async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment | None:
+async def remove_comment(comment_id: int, user: User, db: Session) -> Comment | None:
     """
     Removes a single comment with the specified ID. Can be removed only by admin or moderator.
-
     :param comment_id: The ID of the comment to remove.
     :type comment_id: int
     :param user: Current user that tries to remove the comment.
@@ -105,14 +104,13 @@ async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment |
             db.commit()
         return comment
 
-
     if user.roles == 'admin' or user.roles == 'moderator':
         comment = db.query(Comment).filter(Comment.id == comment_id).first()
         if comment:
             db.delete(comment)
             db.commit()
         return comment
-
+        
     comment = db.query(Comment).filter(Comment.id == comment_id).first()
     if comment:
         db.delete(comment)

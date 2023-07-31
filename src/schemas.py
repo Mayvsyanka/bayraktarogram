@@ -15,7 +15,7 @@ class Role (enum.Enum):
 
 class SortField(str, enum.Enum):
     date = "date"
-    id = "id"
+    rating = "rating"
 
 class UpdateUser(BaseModel):
     bio: str = Field(max_length=500)

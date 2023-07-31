@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 
-from src.routes import auth, users, comments, tags, images, access, transform_photo, find
+from src.routes import auth, users, comments, tags, images, access, transform_photo, find, ratings
 
 from src.conf.config import settings
 

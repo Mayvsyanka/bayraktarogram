@@ -49,7 +49,7 @@ async def create_transformed_photo_url(body: ImageSettingsModel, db: Session = D
 
 
 # dependencies=[Depends(allowed_operation_everyone)
-@router.get('/transformations/{transformed_url_id}', response_model=ImageSettingsResponseModel, dependencies=[Depends(allowed_operation_everyone)])
+@router.get('/transformations/{transformed_url_id}', dependencies=[Depends(allowed_operation_everyone)])
 async def get_transformed_photos(transformed_url_id: int, db: Session = Depends(get_db),
                                  current_user: User = Depends(auth_service.get_current_user)):
     """
@@ -73,10 +73,11 @@ async def get_transformed_photos(transformed_url_id: int, db: Session = Depends(
 
     # get_transformed_qrcode
     transformed_url = await transform_photo.get_transformed_url(db, transformed_url_id, current_user)
+    print(f"LOg{transformed_url}")
     return {"transformed_url_id": transformed_url}
 
 
-@router.get('/transformations/{qrcode_url_id}', response_model=ImageSettingsResponseModel, dependencies=[Depends(get_db)])
+@router.get('/transformationsqr/{qrcode_url_id}', dependencies=[Depends(get_db)])
 async def get_transformed_qrcode(qrcode_url_id: int, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     """
     The get_transformed_qrcode function returns the transformed qrcode_url of a given qrcode_url id.
