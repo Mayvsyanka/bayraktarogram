@@ -1,8 +1,8 @@
-"""Init
+"""Init7
 
-Revision ID: c59b6f02948c
+Revision ID: 4df0bf0ff5f5
 Revises: 
-Create Date: 2023-07-28 21:19:20.806653
+Create Date: 2023-07-31 15:50:52.607316
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c59b6f02948c'
+revision = '4df0bf0ff5f5'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,6 +28,8 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=50), nullable=True),
     sa.Column('email', sa.String(length=250), nullable=False),
+    sa.Column('bio', sa.String(length=500), nullable=True),
+    sa.Column('location', sa.String(length=500), nullable=True),
     sa.Column('password', sa.String(length=255), nullable=False),
     sa.Column('crated_at', sa.DateTime(), nullable=True),
     sa.Column('avatar', sa.String(length=255), nullable=True),
@@ -36,7 +38,8 @@ def upgrade() -> None:
     sa.Column('roles', sa.Enum('admin', 'moderator', 'user', name='role'), nullable=True),
     sa.Column('access', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email')
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('username')
     )
     op.create_table('images',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -71,13 +74,25 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['tag_id'], ['tags.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('ratings',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('one_star', sa.Boolean(), nullable=True),
+    sa.Column('two_stars', sa.Boolean(), nullable=True),
+    sa.Column('three_stars', sa.Boolean(), nullable=True),
+    sa.Column('four_stars', sa.Boolean(), nullable=True),
+    sa.Column('five_stars', sa.Boolean(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('image_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['image_id'], ['images.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('transformated_images_settings',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('url', sa.String(length=300), nullable=True),
     sa.Column('secure_url', sa.String(length=300), nullable=True),
     sa.Column('transformed_url', sa.String(length=300), nullable=True),
     sa.Column('qrcode_url', sa.String(length=300), nullable=True),
-    sa.Column('transformation', sa.PickleType(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.Column('new_image_id', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
@@ -86,10 +101,10 @@ def upgrade() -> None:
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_index(op.f('ix_transformated_images_settings_qrcode_url'), 'transformated_images_settings', ['qrcode_url'], unique=True)
-    op.create_index(op.f('ix_transformated_images_settings_secure_url'), 'transformated_images_settings', ['secure_url'], unique=True)
-    op.create_index(op.f('ix_transformated_images_settings_transformed_url'), 'transformated_images_settings', ['transformed_url'], unique=True)
-    op.create_index(op.f('ix_transformated_images_settings_url'), 'transformated_images_settings', ['url'], unique=True)
+    op.create_index(op.f('ix_transformated_images_settings_qrcode_url'), 'transformated_images_settings', ['qrcode_url'], unique=False)
+    op.create_index(op.f('ix_transformated_images_settings_secure_url'), 'transformated_images_settings', ['secure_url'], unique=False)
+    op.create_index(op.f('ix_transformated_images_settings_transformed_url'), 'transformated_images_settings', ['transformed_url'], unique=False)
+    op.create_index(op.f('ix_transformated_images_settings_url'), 'transformated_images_settings', ['url'], unique=False)
     # ### end Alembic commands ###
 
 
@@ -100,6 +115,7 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_transformated_images_settings_secure_url'), table_name='transformated_images_settings')
     op.drop_index(op.f('ix_transformated_images_settings_qrcode_url'), table_name='transformated_images_settings')
     op.drop_table('transformated_images_settings')
+    op.drop_table('ratings')
     op.drop_table('image_m2m_tag')
     op.drop_table('comments')
     op.drop_index(op.f('ix_images_url'), table_name='images')

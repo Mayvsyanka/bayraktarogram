@@ -4,6 +4,7 @@ from collections import OrderedDict
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
+from src.repository.ratings import get_average_rating
 from src.database.models import Image, User, Tag, Comment
 from src.schemas import ImageUpdateModel, ImageAddModel, ImageAddTagModel, Role
 
@@ -196,8 +197,9 @@ async def get_image(db: Session, id: int, user: User):
     image = db.query(Image).filter(Image.id == id).first()
 
     if image:
+        ratings = await get_average_rating(image.id, db)
         comments = db.query(Comment).filter(Comment.image_id == image.id, Comment.user_id == user.id).all()
-        return image, comments
+        return image, comments, ratings
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
     
@@ -217,6 +219,7 @@ async def get_images(db: Session, user: User):
 
     user_response = []
     for image in images:
+        ratings = await get_average_rating(image.id, db)
         comments = db.query(Comment).filter(Comment.image_id == image.id, Comment.user_id == user.id).all()
-        user_response.append({"image": image, "comments": comments})
+        user_response.append({"image": image, "comments": comments, "ratings": ratings,})
     return user_response
