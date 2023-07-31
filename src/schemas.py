@@ -124,3 +124,40 @@ class ImageAddTagResponse(BaseModel):
 class ImageGetAllResponse(BaseModel):
     images: List[ImageGetResponse]
 
+<<<<<<< Updated upstream
+=======
+
+class ImageSettingsModel (BaseModel): # for Cloudinary
+    # relations
+    user_id: int = Field(..., example=1)
+    image_id: int = Field(..., example=1)
+    # url
+    url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    secure_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    transformed_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    qrcode_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    # settings
+    radius: int = Field(..., example=100)
+    effect: str = Field(..., example="sepia")
+    width: int = Field(..., example=500)
+    height: int = Field(..., example=500)
+    crop: str = Field(..., example="fill")
+    gravity: str = Field(..., example="face")
+    color_space: str = Field(..., example="srgb")
+    angle: int = Field(..., example=0)
+   
+class ImageSettingsResponseModel (BaseModel):
+    user_id: int = Field(..., example=1)
+    transformed_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    qrcode_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    class Config():
+        # This is for Swagger UI documentation
+        schema_extra = {
+            "example": {
+                "user_id": 1,
+                "image_url": "https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg"
+            }
+        }   
+        
+        orm_mode = True
+>>>>>>> Stashed changes

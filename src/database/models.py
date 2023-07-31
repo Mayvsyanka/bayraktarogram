@@ -7,7 +7,7 @@ from src.schemas import Role
 
 Base = declarative_base()
 
-class User(Base):
+class User(Base): #  
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
     username = Column(String(50))
@@ -29,12 +29,12 @@ image_m2m_tag = Table(
     Column("tag_id", Integer, ForeignKey("tags.id", ondelete="CASCADE")),
 )
 
-class Tag(Base):
+class Tag(Base):  #class  
     __tablename__ = "tags"
     id = Column(Integer, primary_key=True)
     name = Column(String(25), nullable=False, unique=True)
 
-class Image(Base):
+class Image(Base):    
     __tablename__ = "images"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -66,7 +66,10 @@ class Comment(Base):
 
 
 class ImageSettings(Base):
+    
     __tablename__ = 'transformated_images_settings'
+    id = Column(Integer, primary_key=True)
+    tablename = 'transformated_images_settings'
     id = Column(Integer, primary_key=True)
     url = Column(String(300), unique=True, index=True)
     secure_url = Column(String(300), unique=True, index=True)
