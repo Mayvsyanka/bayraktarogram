@@ -3,77 +3,82 @@ from unittest.mock import MagicMock
 
 from sqlalchemy.orm import Session
 
-from src.database.models import User, Photo, Comment
+from src.database.models import User, Image, Comment
 from src.schemas import CommentModel
 from src.repository.comments import (
-    get_comments,
     get_comment,
+    update_comment,
+    get_comments,
     create_comment,
     remove_comment,
-    update_comment,
 )
+
+from tests.conftest.py import engine, db
 
 
 class TestComment(unittest.IsolatedAsyncioTestCase):
 
-    def setUp(self):
-        self.session = MagicMock(spec=Session)
-        self.user = User(id=1, roles='admin')
-        self.photo = Photo(id=1)
+    def test_get_comment_not_found(db):
+        comment_id = 123456  # Assuming there's no comment with this ID
+        with pytest.raises(Exception) as exc_info:
+            get_comment(comment_id, db)
+        assert exc_info.type == HTTPException
+        assert exc_info.value.status_code == 404
 
-    async def test_get_comments(self):
-        comments = [Comment(), Comment(), Comment()]
-        self.session.query().filter().offset().limit().all.return_value = comments
-        result = await get_comments(skip=0, limit=10, photo=self.photo, db=self.session)
-        self.assertEqual(result, comments)
+    def test_get_comment_found(db):
+        # Assuming there's a comment with ID 1 in the database
+        comment_id = 1
+        comment_res = get_comment(comment_id, db)
+        assert comment_res is not None
+        assert comment_res.id == comment_id
 
-    async def test_get_comment_found(self):
-        comment = Comment()
-        self.session.query().filter().first.return_value = comment
-        result = await get_comment(comment_id=1, db=self.session)
-        self.assertEqual(result, comment)
+    def test_update_comment_not_found(db):
+        body = {"id": 123456, "content": "new_test_comment"}
+        user = User(id=1, roles=Role.user)  # Assuming the user exists and is not an admin or moderator
+        updated_comment = update_comment(body, user, db)
+        assert updated_comment is None
 
-    async def test_get_comment_not_found(self):
-        self.session.query().filter().first.return_value = None
-        result = await get_comment(comment_id=1, db=self.session)
-        self.assertIsNone(result)
+    def test_update_comment_found(db):
+        # Assuming there's a comment with ID 1 in the database, and the user with ID 1 is its creator
+        body = {"id": 1, "content": "new_test_comment"}
+        user = User(id=1, roles=Role.user)
+        updated_comment = update_comment(body, user, db)
+        assert updated_comment is not None
+        assert updated_comment.content == "new_test_comment"
 
-    async def test_create_comment(self):
-        body = CommentModel(content="test comment", user_id=self.user.id, user_roles=self.user.roles,
-                            photo_id=self.photo.id)
-        self.session.query().filter().all.return_value = comment
-        result = await create_comment(body=body, user=self.user, photo=self.photo, db=self.session)
-        self.assertEqual(result.content, body.content)
-        self.assertTrue(hasattr(result, "id"))
+    def test_get_comments_not_found(db):
+        photo_id = 123456  # Assuming there's no image with this ID
+        with pytest.raises(Exception) as exc_info:
+            get_comments(photo_id, db)
+        assert exc_info.type == HTTPException
+        assert exc_info.value.status_code == 404
 
-    async def test_remove_comment_found(self):
-        comment = Comment()
-        self.session.query().filter().first.return_value = comment
-        result = await remove_comment(comment_id=1, user=self.user, db=self.session)
-        self.assertEqual(result, comment)
+    def test_get_comments_found(db):
+        # Assuming there's an image with ID 1 and it has comments in the database
+        photo_id = 1
+        comments_list = get_comments(photo_id, db)
+        assert isinstance(comments_list, List)
 
-    async def test_remove_comment_not_found(self):
-        self.session.query().filter().first.return_value = None
-        result = await remove_comment(comment_id=1, user=self.user, db=self.session)
-        self.assertIsNone(result)
+    def test_create_comment(db):
+        # Assuming there's a user with ID 1 and an image with ID 3 in the database
+        body = {"content": "test_comment", "image_id": 3}
+        user = User(id=1, roles=Role.user)
+        new_comment = create_comment(body, user, db)
+        assert new_comment is not None
+        assert new_comment.content == "test_comment"
 
-    async def test_update_comment_found(self):
-        body = CommentModel(content="test comment", user_id=self.user.id, user_roles=self.user.roles,
-                            photo_id=self.photo.id)
-        self.session.query().filter().all.return_value = comment
-        self.session.query().filter().first.return_value = comment
-        self.session.commit.return_value = None
-        result = await update_comment(comment_id=1, body=body, user=self.user, db=self.session)
-        self.assertEqual(result, comment)
+    def test_remove_comment_not_found(db):
+        comment_id = 123456  # Assuming there's no comment with this ID
+        user = User(id=1, roles=Role.user)  # Assuming the user exists and is not an admin or moderator
+        removed_comment = remove_comment(comment_id, user, db)
+        assert removed_comment is None
 
-    async def test_update_comment_not_found(self):
-        body = CommentModel(content="test comment", user_id=self.user.id, user_roles=self.user.roles,
-                            photo_id=self.photo.id)
-        self.session.query().filter().first.return_value = None
-        self.session.commit.return_value = None
-        result = await update_comment(comment_id=1, body=body, user=self.user, db=self.session)
-        self.assertIsNone(result)
-
+    def test_remove_comment_found(db):
+        # Assuming there's a comment with ID 1 in the database, and the user with ID 1 is an admin or moderator
+        comment_id = 1
+        user = User(id=1, roles=Role.admin)  # Assuming the user is an admin or moderator
+        removed_comment = remove_comment(comment_id, user, db)
+        assert removed_comment is not None
 
 if __name__ == '__main__':
     unittest.main()

@@ -15,9 +15,8 @@ router = APIRouter(prefix='/comments', tags=["comments"])
 
 
 
-@router.get("/{photo_id}", response_model=List[CommentResponse], dependencies=[Depends(allowed_operation_everyone)])
-async def get_comments(photo_id: int, db: Session = Depends(get_db),
-                        current_user: User = Depends(auth_service.get_current_user)):
+@router.get("_to_photo/{photo_id}", response_model=List[CommentResponse], dependencies=[Depends(allowed_operation_everyone)])
+async def get_comments(photo_id: int, db: Session = Depends(get_db)):
     """
        Retrieves a list of comments for a specific photo with specified pagination parameters.
 
@@ -28,16 +27,14 @@ async def get_comments(photo_id: int, db: Session = Depends(get_db),
     image = db.query(Image).filter(Image.id == photo_id).first()
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
-    comments = await repository_comments.get_comments(photo_id, db)
+    return await repository_comments.get_comments(photo_id, db)
 
 
 
-@router.get("/{comment_id}", response_model=List[CommentResponse], dependencies=[Depends(allowed_operation_everyone)])
-async def get_comment(comment_id: int, db: Session = Depends(get_db),
-                    current_user: User = Depends(auth_service.get_current_user)):
+@router.get("_by_id/{comment_id}", response_model=CommentResponse, dependencies=[Depends(allowed_operation_everyone)])
+async def get_comment(comment_id: int, db: Session = Depends(get_db)):
     """
      Retrieves a single comment with the specified ID.
-
      :param comment_id: The ID of the comment to retrieve.
      :param db: The database session.
      :return: The comment with the specified ID, or None if it does not exist.
@@ -86,9 +83,10 @@ async def update_comment(body: CommentUpdateModel, db: Session = Depends(get_db)
     return comment
 
 
-@router.delete("/delete/{comment_id}", response_model=CommentResponse, dependencies=[Depends(allowed_operation_mod_and_admin)])
-async def remove_comment(comment_id: int, db: Session = Depends(get_db),
-                    current_user: User = Depends(auth_service.get_current_user)):
+@router.delete("/delete/{comment_id}", response_model=CommentResponse,
+               dependencies=[Depends(allowed_operation_mod_and_admin)])
+async def remove_comment(comment_id: int, current_user: User = Depends(auth_service.get_current_user),
+                         db: Session = Depends(get_db)):
     """
     Removes a single comment with the specified ID. Can be removed only by admin or moderator.
 
@@ -101,5 +99,7 @@ async def remove_comment(comment_id: int, db: Session = Depends(get_db),
     if comment is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
     return comment
+
+
 
 
