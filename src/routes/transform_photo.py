@@ -1,5 +1,3 @@
-
-
 from typing import List
 import os
 
@@ -73,7 +71,7 @@ async def get_transformed_photos(transformed_url_id: int, db: Session = Depends(
 
     # get_transformed_qrcode
     transformed_url = await transform_photo.get_transformed_url(db, transformed_url_id, current_user)
-    print(f"LOg{transformed_url}")
+    
     return {"transformed_url_id": transformed_url}
 
 
