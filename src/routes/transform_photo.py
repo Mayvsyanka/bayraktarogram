@@ -36,9 +36,9 @@ async def create_transformed_photo_url(body: ImageSettingsModel, db: Session = D
     :doc-author: Trelent
     """
     cloudinary.config(
-        cloud_name=os.environ.get('CLOUD_NAME'),
-        api_key=os.environ.get('API_KEY'),
-        api_secret=os.environ.get('API_SECRET'),
+        cloud_name=os.environ.get('cloudinary_NAME'),
+        api_key=os.environ.get('cloudinary_API_KEY'),
+        api_secret=os.environ.get('cloudinary_API_SECRET'),
         secure=True
     )
 
@@ -63,9 +63,9 @@ async def get_transformed_photos(transformed_url_id: int, db: Session = Depends(
     """
     # config = cloudinary.config(secure=True)
     cloudinary.config(
-        cloud_name=os.environ.get('CLOUD_NAME'),
-        api_key=os.environ.get('API_KEY'),
-        api_secret=os.environ.get('API_SECRET'),
+        cloud_name=os.environ.get('cloudinary_NAME'),
+        api_key=os.environ.get('cloudinary_API_KEY'),
+        api_secret=os.environ.get('cloudinary_API_SECRET'),
         secure=True
     )
 

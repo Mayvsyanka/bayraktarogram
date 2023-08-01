@@ -94,7 +94,7 @@ async def create_transformed_photo_url(body: ImageSettings, db: Session, current
         # create file qr_code.png with qrcode
         qrcode_file_name = create_qrcode(transformation_url)
         # qrcode's file path
-        qrcode_url = "D:/cloudinary_web//bayraktarogram/" + qrcode_file_name
+        qrcode_url = "C:\Projects\\bayraktarogram\\" + qrcode_file_name
         # Create the transformed image urls
         transformatiom_image = ImageSettings(url=image_url,
                                              transformed_url=transformation_url,
