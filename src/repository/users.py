@@ -111,8 +111,7 @@ async def update_profile(body, current_user, db):
     return(current_user)
 
 async def get_user_info(email, db):
-    user = await get_user_by_email(email, db)
-    return(user)
+    return db.query(User).filter(User.username == email).first()
     
 
 

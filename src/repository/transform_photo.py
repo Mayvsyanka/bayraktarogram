@@ -4,6 +4,7 @@ from src.database.models import ImageSettings, Image, User
 from fastapi import HTTPException, status
 from src.services.photo_services import create_qrcode, createImageTag, getAssetInfo, uploadImage
 import qrcode
+import os
 
 
 
@@ -91,10 +92,24 @@ async def create_transformed_photo_url(body: ImageSettings, db: Session, current
             public_name, transformation=body.transformation)
         print(f'transformation_url:', transformation_url)
 
+        folder_name = "bayraktarogram"
+
+# Получаем текущую директорию (текущую папку)
+        current_directory = os.getcwd()
+
+# Объединяем текущую директорию с именем папки для получения полного пути
+        folder_path = os.path.join(current_directory, folder_name)
+
+# Получаем абсолютный путь к папке
+        absolute_folder_path = os.path.abspath(folder_path).split("\\")
+
+        absolute_folder_path.pop()
+
+        path = ("\\").join(absolute_folder_path)
         # create file qr_code.png with qrcode
         qrcode_file_name = create_qrcode(transformation_url)
         # qrcode's file path
-        qrcode_url = "C:\Projects\\bayraktarogram\\" + qrcode_file_name
+        qrcode_url = path + "\\" + qrcode_file_name
         # Create the transformed image urls
         transformatiom_image = ImageSettings(url=image_url,
                                              transformed_url=transformation_url,

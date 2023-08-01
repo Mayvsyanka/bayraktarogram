@@ -54,8 +54,8 @@ async def update_avatar_user(file: UploadFile = File(), current_user: User = Dep
     return user
 
 @router.get("/profile/{user}", response_model=Profile)
-async def get_profile(email: str, _: User = Depends(auth_service.get_current_user), db: Session = Depends(get_db)):
-    user_info = await repository_users.get_user_info(email, db)
+async def get_profile(username: str, _: User = Depends(auth_service.get_current_user), db: Session = Depends(get_db)):
+    user_info = await repository_users.get_user_info(username, db)
     photos = db.query(func.count()).filter(Image.id == user_info.id).scalar()
     return {"username": user_info.username, 
             "email": user_info.email,
