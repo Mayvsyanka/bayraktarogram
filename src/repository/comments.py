@@ -59,7 +59,9 @@ async def create_comment(body: CommentModel, user: User, db: Session) -> Comment
     :return: The newly created comment.
     :rtype: Comment
     """
+
     comment = Comment(content = body.content, user_id = user.id, image_id = body.image_id)
+
     db.add(comment)
     db.commit()
     db.refresh(comment)
@@ -81,7 +83,9 @@ async def update_comment(body: CommentUpdateModel, user: User, db: Session) -> C
     :return: The updated comment, or None if it does not exist.
     :rtype: Comment | None
     """
+
     comment = db.query(Comment).filter(Comment.id == body.id).first()
+
     if comment:
         if user.id == comment.user_id:
             comment.content = body.content
@@ -89,10 +93,9 @@ async def update_comment(body: CommentUpdateModel, user: User, db: Session) -> C
     return comment
 
 
-async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment | None:
+async def remove_comment(comment_id: int, user: User, db: Session) -> Comment | None:
     """
     Removes a single comment with the specified ID. Can be removed only by admin or moderator.
-
     :param comment_id: The ID of the comment to remove.
     :type comment_id: int
     :param user: Current user that tries to remove the comment.
@@ -108,5 +111,3 @@ async def remove_comment(comment_id: int, user: User, db: Session)  -> Comment |
             db.delete(comment)
             db.commit()
         return comment
-
-

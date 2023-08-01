@@ -3,7 +3,7 @@
 from libgravatar import Gravatar
 from sqlalchemy.orm import Session
 
-from src.database.models import User
+from src.database.models import User, Image
 from src.schemas import UserModel, Role
 
 
@@ -104,21 +104,15 @@ async def update_avatar(email, url: str, db: Session) -> User:
     return user
 
 
-async def update_user(email, role:Role, db: Session):
-    """
-    The update_user function updates the user's role in the database.
-    
-    :param email: Find the user in the database
-    :type email: str
-    :param role: Pass in the role object that will be assigned to the user
-    :type role: Role
-    :param db: Pass the database session to the function
-    :type db: Session
-    :return: A user object with the updated role
-    :rtype: User
-    """
-    
-    user = await get_user_by_email(email, db)
-    user.roles = role
+async def update_profile(body, current_user, db):
+    current_user.bio = body.bio
+    current_user.location = body.location
     db.commit()
+    return(current_user)
+
+async def get_user_info(email, db):
+    user = await get_user_by_email(email, db)
     return(user)
+    
+
+

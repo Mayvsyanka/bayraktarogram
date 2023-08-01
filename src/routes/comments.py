@@ -8,9 +8,11 @@ from src.schemas import CommentModel, CommentResponse, CommentUpdateModel
 from src.repository import comments as repository_comments
 from src.database.models import Comment, User, Image
 from src.services.auth import auth_service
+
 from src.services.roles import allowed_operation_mod_and_admin, allowed_operation_everyone
 
 router = APIRouter(prefix='/comments', tags=["comments"])
+
 
 
 @router.get("/{photo_id}", response_model=List[CommentResponse], dependencies=[Depends(allowed_operation_everyone)])
@@ -27,7 +29,7 @@ async def get_comments(photo_id: int, db: Session = Depends(get_db),
     if image is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
     comments = await repository_comments.get_comments(photo_id, db)
-    return comments
+
 
 
 @router.get("/{comment_id}", response_model=List[CommentResponse], dependencies=[Depends(allowed_operation_everyone)])
@@ -40,6 +42,7 @@ async def get_comment(comment_id: int, db: Session = Depends(get_db),
      :param db: The database session.
      :return: The comment with the specified ID, or None if it does not exist.
      """
+
     comment = await repository_comments.get_comment(comment_id, db)
     if comment is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
@@ -49,6 +52,7 @@ async def get_comment(comment_id: int, db: Session = Depends(get_db),
 @router.post("/add", response_model=CommentResponse, dependencies=[Depends(allowed_operation_everyone)])
 async def create_comment(body: CommentModel, db: Session = Depends(get_db),
                     current_user: User = Depends(auth_service.get_current_user)):
+
     """
     Creates a new comment for a specific photo.
 
@@ -61,9 +65,11 @@ async def create_comment(body: CommentModel, db: Session = Depends(get_db),
     return await repository_comments.create_comment(body, current_user, db)
 
 
+
 @router.put("/update/{comment_id}", response_model=CommentResponse, dependencies=[Depends(allowed_operation_everyone)])
 async def update_comment(body: CommentUpdateModel, db: Session = Depends(get_db),
                     current_user: User = Depends(auth_service.get_current_user)):
+
     """
     Updates a single comment with the specified ID created by the specific user.
 
@@ -74,6 +80,7 @@ async def update_comment(body: CommentUpdateModel, db: Session = Depends(get_db)
     :return: The updated comment, or None if it does not exist.
     """
     comment = await repository_comments.update_comment(body, current_user, db)
+
     if comment is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Comment not found")
     return comment

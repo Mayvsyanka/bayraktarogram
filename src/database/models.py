@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, func, Table, UniqueConstraint, Enum
+from sqlalchemy import Column, Integer, String, Boolean, func, Table, UniqueConstraint, Enum, PickleType
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
@@ -10,10 +10,12 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    username = Column(String(50))
+    username = Column(String(50), unique=True)
     email = Column(String(250), nullable=False, unique=True)
+    bio = Column(String(500))
+    location = Column(String(500))
     password = Column(String(255), nullable=False)
-    created_at = Column('crated_at', DateTime, default=func.now())
+    crated_at = Column('crated_at', DateTime, default=func.now())
     avatar = Column(String(255), nullable=True)
     refresh_token = Column(String(255), nullable=True)
     confirmed = Column(Boolean, default=False)
@@ -47,7 +49,7 @@ class Image(Base):
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
 
-    comments = relationship('Comment', back_populates='images')
+    comments = relationship('Comment', back_populates='image')
     transformated_images_settings = relationship("ImageSettings", back_populates='image')
 
 
@@ -64,24 +66,33 @@ class Comment(Base):
     image = relationship('Image', back_populates='comments')
 
 
-
 class ImageSettings(Base):
+
     __tablename__ = 'transformated_images_settings'
     id = Column(Integer, primary_key=True)
-    url = Column(String(300), unique=True, index=True)
-    secure_url = Column(String(300), unique=True, index=True)
-    transformation_url = Column(String(300), unique=True, index=True)
-    radius = Column(Integer, nullable=False, default=0)
-    effect = Column(String(50), nullable=False, default='sepia')
-    width = Column(Integer, nullable=False, default=500)
-    height = Column(Integer, nullable=False, default=500)
-    gravity = Column(String(50), nullable=False, default='face')
-    crop = Column(String(50), nullable=False, default='fill')
-    color_space = Column(String(50), nullable=False, default='srgb')
+    url = Column(String(300), unique=False, index=True)
+    secure_url = Column(String(300), unique=False, index=True)
+    transformed_url = Column(String(300), unique=False, index=True)
+    qrcode_url = Column(String(300), unique=False, index=True)
     user_id = Column('user_id', ForeignKey(
         'users.id', ondelete='CASCADE'), default=None)
-    image_id = Column('image_id', ForeignKey(
+    new_image_id = Column('new_image_id', ForeignKey(
         'images.id', ondelete='CASCADE'), default=None)
-    image = relationship('Image', backref="transformated_images_settings")
+    image = relationship('Image', backref="images_settings")
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
+
+
+class Rating(Base):
+    __tablename__ = 'ratings'
+    id = Column(Integer, primary_key=True)
+    one_star = Column(Boolean, default=False)
+    two_stars = Column(Boolean, default=False)
+    three_stars = Column(Boolean, default=False)
+    four_stars = Column(Boolean, default=False)
+    five_stars = Column(Boolean, default=False)
+    user_id = Column('user_id', ForeignKey('users.id', ondelete='CASCADE'), default=None)
+    user = relationship('User', backref="ratings")
+    image_id = Column('image_id', ForeignKey('images.id', ondelete='CASCADE'), default=None)
+    image = relationship('Image', backref="ratings")
+
