@@ -13,7 +13,7 @@ from src.schemas import Role
 router = APIRouter(prefix="/access", tags=["access"])
 
 
-@router.put("/block_user", dependencies=[Depends(allowed_operation_admin)])
+@router.put("/block_user/{email}", dependencies=[Depends(allowed_operation_admin)])
 async def unblock_user(email: str, current_user: User = Depends(auth_service.get_current_user),
                      db: Session = Depends(get_db)):
     user = await repository_access.unblock_user(email, db)
