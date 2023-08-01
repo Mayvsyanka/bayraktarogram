@@ -23,12 +23,7 @@ async def get_transformed_url(db: Session, id: int, user: User):
     """
     
     transformed_url = db.query(ImageSettings).filter(ImageSettings.id == id).first()
-       
-    # if not transformed_url:
-    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Transformated url with id {id} not found")
-    # else:
-    #     return transformed_url.id, transformed_url.transformed_url
-    
+        
     if transformed_url:
         return  transformed_url.id, transformed_url.transformed_url
     else:
@@ -52,11 +47,7 @@ async def get_transformed_qrcode(db:Session, id: int, user: User):
         """
         qrcode_url = db.query(ImageSettings).filter(ImageSettings.id == id).first()
         
-        # if not qrcode_url:
-        #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Qrcode url with id {qrcode_url_id} not found")
-        # else:
-        #     return qrcode_url.transformed_url
-        
+               
         if qrcode_url:
             return qrcode_url.id, qrcode_url.qrcode_url 
         else:
