@@ -22,6 +22,16 @@ class User(Base):
     roles = Column('roles', Enum(Role), default=Role.user)
     access = Column(Boolean, default=True)
     comments = relationship('Comment', back_populates='author')
+    message = relationship('Message', back_populates='user')
+
+class Message(Base):
+    __tablename__ = "messages"
+    id = Column(Integer, primary_key=True)
+    text_message = Column(String(500), unique=False)
+    reciever = Column(String(50), unique=False)
+    sender = Column("sender", String(
+        50), ForeignKey('users.email', ondelete='CASCADE'))
+    user = relationship('User', back_populates='message')
 
 image_m2m_tag = Table(
     "image_m2m_tag",

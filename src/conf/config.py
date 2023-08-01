@@ -13,9 +13,9 @@ class Settings(BaseSettings):
     mail_port: int
     mail_server: str
 
-    cloud_name: str
-    api_key: str
-    api_secret: str
+    cloudinary_name: str
+    cloudinary_api_key: str
+    cloudinary_api_secret: str
 
 
     class Config:
