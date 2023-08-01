@@ -68,12 +68,14 @@ class TokenModel(BaseModel):
 
 class CommentModel(BaseModel):
     content: str = Field(max_length=250)
-    user_id: int
     image_id: int
 
-
+class CommentUpdateModel(BaseModel):
+    content: str = Field(max_length=500)
+    id: int
 
 class CommentResponse(CommentModel):
+    content: str = Field(max_length=500)
     id: int
 
     class Config:
