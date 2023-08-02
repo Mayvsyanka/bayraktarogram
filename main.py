@@ -22,6 +22,13 @@ app.include_router(find.router, prefix='/api')
 
 @app.get("/", tags=["Root"])
 def read_root():
+    """
+    The read_root function returns a dictionary with the key &quot;message&quot; and value &quot;Welcome to Ghostgram&quot;.
+    
+    
+    :return: A dictionary with a key of message and a value of &quot;welcome to ghostgram&quot;
+    :rtype: dict
+    """
     return {"message": "Welcome to Ghostgram"}
 
 

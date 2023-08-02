@@ -25,10 +25,10 @@ async def get_image(id: int, db: Session = Depends(get_db),
     """
     The get_image function returns a JSON object containing the image and comments.
     The image is returned as an ImageAddResponse object, which contains the following fields:
-        id (int): The ID of the image in our database.
-        name (str): The name of the user who uploaded this image.
-        url (str): A URL to access this image on Cloudinary's servers. This URL will be valid for 24 hours after it was generated, so if you want to use it later than that, you'll need to generate a new one using get_image_url(). 
-        tags ([str]): A list of
+    id (int): The ID of the image in our database.
+    name (str): The name of the user who uploaded this image.
+    url (str): A URL to access this image on Cloudinary's servers. This URL will be valid for 24 hours after it was generated, so if you want to use it later than that, you'll need to generate a new one using get_image_url(). 
+    tags ([str]): A list of
     
     :param id: int: Specify the id of the image to be retrieved
     :param db: Session: Pass the database session to the function

@@ -13,16 +13,42 @@ from src.schemas import Role
 router = APIRouter(prefix="/access", tags=["access"])
 
 
-@router.put("/block_user/{email}", dependencies=[Depends(allowed_operation_admin)])
+@router.put("/unblock_user/{email}", dependencies=[Depends(allowed_operation_admin)])
 async def unblock_user(email: str, current_user: User = Depends(auth_service.get_current_user),
                      db: Session = Depends(get_db)):
+    """
+    The unblock_user function unblocks a user by email.
+        Args:
+            email (str): The email of the user to be unblocked.
+            current_user (User): The currently logged in user, who is performing the action.
+            db (Session): A database session object for interacting with the database.
+    
+    :param email: str: Specify the email of the user to be unblocked
+    :param current_user: User: Get the current user
+    :param db: Session: Access the database
+    :return: The user object that was unblocked
+    :doc-author: Trelent
+    """
     user = await repository_access.unblock_user(email, db)
     return (user)
 
 
-@router.put("/unblock_user", dependencies=[Depends(allowed_operation_admin)])
+@router.put("/block_user", dependencies=[Depends(allowed_operation_admin)])
 async def block_user(email: str, current_user: User = Depends(auth_service.get_current_user),
                        db: Session = Depends(get_db)):
+    """
+    The block_user function blocks a user from the database.
+        Args:
+            email (str): The email of the user to be blocked.
+            current_user (User): The currently logged in user, who is blocking another user.
+            db (Session): A database session object for interacting with the database.
+    
+    :param email: str: Get the email of the user to be blocked
+    :param current_user: User: Get the user who is currently logged in
+    :param db: Session: Access the database
+    :return: A user object
+    :doc-author: Trelent
+    """
     user = await repository_access.block_user(email, db)
     return (user)
 

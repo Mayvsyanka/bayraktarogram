@@ -105,12 +105,35 @@ async def update_avatar(email, url: str, db: Session) -> User:
 
 
 async def update_profile(body, current_user, db):
+    """
+    The update_profile function updates the current user's profile information.
+        Args:
+            body (dict): A dictionary containing the new bio and location for the current user.
+            current_user (User): The currently logged in User object.
+            db (SessionLocal): An SQLAlchemy SessionLocal object that allows us to query our database.
+    
+    :param body: Get the data from the request body
+    :param current_user: Get the user that is currently logged in
+    :param db: Access the database
+    :return: The current_user object
+    :doc-author: Trelent
+    """
     current_user.bio = body.bio
     current_user.location = body.location
     db.commit()
     return(current_user)
 
 async def get_user_info(email, db):
+    """
+    The get_user_info function takes in an email and a database connection.
+    It then queries the database for a user with that email address, returning
+    the first result if it exists.
+    
+    :param email: Filter the user from the database
+    :param db: Query the database
+    :return: A user object
+    :doc-author: Trelent
+    """
     return db.query(User).filter(User.username == email).first()
     
 

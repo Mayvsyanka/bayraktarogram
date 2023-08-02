@@ -19,6 +19,16 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.post("/me/", response_model=UserDb)
 async def update_profile(body: UpdateUser, current_user: User = Depends(auth_service.get_current_user), db: Session = Depends(get_db)):
+    """
+    The update_profile function updates the user's profile information.
+        
+    
+    :param body: UpdateUser: Get the data from the request body
+    :param current_user: User: Access the current user's information
+    :param db: Session: Access the database
+    :return: A user object
+    :doc-author: Trelent
+    """
     user = await repository_users.update_profile(body, current_user, db)
     return user
 
@@ -55,6 +65,15 @@ async def update_avatar_user(file: UploadFile = File(), current_user: User = Dep
 
 @router.get("/profile/{user}", response_model=Profile)
 async def get_profile(username: str, _: User = Depends(auth_service.get_current_user), db: Session = Depends(get_db)):
+    """
+    The get_profile function returns a user's profile information.
+    
+    :param username: str: Get the username of the user whose profile is being requested
+    :param _: User: Get the current user
+    :param db: Session: Pass the database session to the function
+    :return: A user's profile information
+    :doc-author: Trelent
+    """
     user_info = await repository_users.get_user_info(username, db)
     photos = db.query(func.count()).filter(Image.id == user_info.id).scalar()
     return {"username": user_info.username, 

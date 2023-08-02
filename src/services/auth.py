@@ -29,6 +29,18 @@ class Auth:
 
     # define a function to generate a new access token
     async def create_access_token(self, data: dict, expires_delta: Optional[float] = None):
+        """
+        The create_access_token function creates a new access token for the user.
+            Args:
+                data (dict): A dictionary containing the user's information.
+                expires_delta (Optional[float]): The time in seconds until the token expires. Defaults to 15 minutes if not specified.
+        
+        :param self: Represent the instance of the class
+        :param data: dict: Pass in the data to be encoded
+        :param expires_delta: Optional[float]: Set the expiration time of the token
+        :return: The encoded access token
+        :doc-author: Trelent
+        """
         to_encode = data.copy()
         if expires_delta:
             expire = datetime.utcnow() + timedelta(seconds=expires_delta)
