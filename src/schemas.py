@@ -6,6 +6,7 @@ from typing import List, Optional, Dict
 from datetime import date, datetime
 
 from pydantic import BaseModel, Field, EmailStr
+from pydantic.fields import FieldInfo, Undefined, Field
 
 class Role (enum.Enum):
     admin: str = 'admin'
@@ -147,6 +148,30 @@ class ImageAddTagResponse(BaseModel):
 class ImageGetAllResponse(BaseModel):
     images: List[ImageGetResponse]
 
+
+class ImageSettingsModel(BaseModel): # POST
+    # relations
+    # id: int = Field(..., example=1)
+    user_id: int = Field(..., example=1)
+    image_id: int = Field(..., example=1)
+
+    transformation: List[Dict[str, str]] = Field(..., example=[{"radius": "max"}, {"effect": "sepia"}, {"width": "500"}, {"height": "500"}, {"crop": "fill"}, {"gravity": "face"}, {"color_space": "srgb"}, {"angle": "0"}])    
+   
+class ImageSettingsResponseModel(BaseModel): 
+    id: int = Field(..., example=1)
+    transformed_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    # qrcode_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    class Config():
+        orm_mode = True 
+        
+        
+class ImageSettingsQrcodeResponseModel(BaseModel): 
+    id: int = Field(..., example=1)
+    # transformed_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    qrcode_url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+    class Config():
+        orm_mode = True       
+
 class RatingModel(BaseModel):
     one_star: Optional[bool] = False
     two_stars: Optional[bool] = False
@@ -175,31 +200,4 @@ class AverageRatingResponse(BaseModel):
 
 
 
-class ImageSettingsModel (BaseModel):  # for Cloudinary
-    # relations
-    user_id: int = Field(..., example=1)
-    image_id: int = Field(..., example=1)
-    # url
-    url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    transformation: List[Dict[str, str]] = Field(..., example=[{"radius": "max"}, {"effect": "sepia"}, {"width": "500"}, {
-                                                 "height": "500"}, {"crop": "fill"}, {"gravity": "face"}, {"color_space": "srgb"}, {"angle": "0"}])
-
-
-class ImageSettingsResponseModel (BaseModel):
-    user_id: int = Field(..., example=1)
-    transformed_url: str = Field(
-        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-    qrcode_url: str = Field(
-        ..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
-
-    class Config():
-        # This is for Swagger UI documentation
-        schema_extra = {
-            "example": {
-                "user_id": 1,
-                "image_url": "https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg"
-            }
-        }
-
-        orm_mode = True
 

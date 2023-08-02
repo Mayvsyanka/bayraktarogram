@@ -24,8 +24,10 @@ config = cloudinary.config(secure=True)
 
 # Log the configuration
 # ==============================
+
 print("****1. Set up and configure the SDK:****\nCredentials: ",
       settings.cloudinary_name, settings.cloudinary_api_key, "\n")
+
 
 
 def uploadImage(src_url, public_id):
