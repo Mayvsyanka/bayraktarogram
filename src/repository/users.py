@@ -3,7 +3,7 @@
 from libgravatar import Gravatar
 from sqlalchemy.orm import Session
 
-from src.database.models import User
+from src.database.models import User, Image
 from src.schemas import UserModel, Role
 
 
@@ -102,3 +102,16 @@ async def update_avatar(email, url: str, db: Session) -> User:
     user.avatar = url
     db.commit()
     return user
+
+
+async def update_profile(body, current_user, db):
+    current_user.bio = body.bio
+    current_user.location = body.location
+    db.commit()
+    return(current_user)
+
+async def get_user_info(email, db):
+    return db.query(User).filter(User.username == email).first()
+    
+
+

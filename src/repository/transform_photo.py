@@ -4,11 +4,14 @@ from src.database.models import ImageSettings, Image, User
 from fastapi import HTTPException, status
 from src.services.photo_services import create_qrcode, createImageTag, getAssetInfo, uploadImage
 import qrcode
+import os
+
 
 
 
 async def get_transformed_url(db: Session, id: int, user: User):
     """
+
     The get_transformed_url function returns the transformed url of an image with a given id.
         The function takes in two parameters:
             - db: A database session object that allows us to query the database for information.
@@ -63,45 +66,63 @@ async def create_transformed_photo_url(body:ImageSettings, db: Session, current_
             current_user (User): The user who is currently logged in and making this request. 
         Returns: 
             ImageSettings: An ImageSettings object containing all of the information about an image, including its secure URL, transformation URL, QR code URL, etc.
-    
+
+
     :param body:ImageSettings: Get the image_id, radius, effect, width and height parameters from the request body
     :param db: Session: Access the database
     :param current_user: User: Get the user_id of the current user
     :return: The image_settings object
     :doc-author: Trelent
     """
+
     
     # Get the image url from the database (table Image)
     result = db.query(Image).filter(Image.id == body.image_id, Image.user_id == current_user.id).first()
+
     image_url = result.url
     print(f'image_url from Image:', image_url)
     public_name = result.public_name
     print(f'public_name from Image:', public_name)
-    
+
     if public_name is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Image with id {body.image_id} not found")   
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Image with id {body.image_id} not found")
     else:
-        # Build the URL for the image 
+        # Build the URL for the image
         secure_url = uploadImage(image_url, public_name)
-        # Get the image info 
+        # Get the image info
         getAssetInfo(public_name)
-        
+
         # Create the transformed image url
-        transformation_url = createImageTag(public_name, transformation=body.transformation)
+        transformation_url = createImageTag(
+            public_name, transformation=body.transformation)
         print(f'transformation_url:', transformation_url)
-        
-        
-        #create file qr_code.png with qrcode 
+
+        folder_name = "bayraktarogram"
+
+# Получаем текущую директорию (текущую папку)
+        current_directory = os.getcwd()
+
+# Объединяем текущую директорию с именем папки для получения полного пути
+        folder_path = os.path.join(current_directory, folder_name)
+
+# Получаем абсолютный путь к папке
+        absolute_folder_path = os.path.abspath(folder_path).split("\\")
+
+        absolute_folder_path.pop()
+
+        path = ("\\").join(absolute_folder_path)
+        # create file qr_code.png with qrcode
         qrcode_file_name = create_qrcode(transformation_url)
-        #qrcode's file path
-        qrcode_url = "D:/cloudinary_web//bayraktarogram/"  + qrcode_file_name
+        # qrcode's file path
+        qrcode_url = path + "\\" + qrcode_file_name
         # Create the transformed image urls
         transformatiom_image = ImageSettings(url=image_url,
                                              transformed_url=transformation_url,
-                                             qrcode_url=qrcode_url, 
+                                             qrcode_url=qrcode_url,
                                              secure_url=secure_url,
-                                             user_id=current_user.id)    
-        # Add the transformed image urls to the database                                                     
+                                             user_id=current_user.id)
+        # Add the transformed image urls to the database
         db.add(transformatiom_image)
         db.commit()
         db.refresh(transformatiom_image)

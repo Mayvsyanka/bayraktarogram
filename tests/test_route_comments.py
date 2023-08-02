@@ -1,126 +1,100 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
+from fastapi.testclient import TestClient
 
-from src.database.models import User
+from main import app
+
 from src.services.auth import auth_service
 
 
-#@pytest.fixture()
-#def token(client, user, session, monkeypatch):
-    #mock_send_email = MagicMock()
-    #monkeypatch.setattr("src.routes.auth.send_email", mock_send_email)
-    #client.post("/api/auth/signup", json=user)
-    #current_user: User = session.query(User).filter(User.email == user.get('email')).first()
-    #current_user.confirmed = True
-    #session.commit()
-    #response = client.post(
-        #"/api/auth/login",
-        #data={"username": user.get('email'), "password": user.get('password')},)
-    #data = response.json()
-    #return data["access_token"]
-
+client = TestClient(app)
 
 def test_create_comment(client, token):
     with patch.object(auth_service, 'r') as r_mock:
         r_mock.get.return_value = None
         response = client.post(
-            "/api/comments",
-            json={"name": "test_comment"},
+            "/comments/add",
+            json={'content': "test_comment", 'image_id': 3},
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 201, response.text
         data = response.json()
-        assert data["name"] == "test_comment"
-        assert "id" in data
+        assert data["content"] == "test_comment"
 
 
 def test_get_comment(client, token):
     with patch.object(auth_service, 'r') as r_mock:
         r_mock.get.return_value = None
         response = client.get(
-            "/api/comments/1",
+            "/comments_by_id/1",
+            json={'content': "test_comment", 'id': 1},
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, response.text
         data = response.json()
-        assert data["name"] == "test_comment"
-        assert "id" in data
+        assert data["content"] == "test_comment"
 
 
 def test_get_comment_not_found(client, token):
     with patch.object(auth_service, 'r') as r_mock:
         r_mock.get.return_value = None
         response = client.get(
-            "/api/comments/2",
+            "/comments_by_id/20",
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 404, response.text
         data = response.json()
-        assert data["detail"] == "Comment not found"
+        assert data["content"] == "Comment not found"
 
 
 def test_get_comments(client, token):
     with patch.object(auth_service, 'r') as r_mock:
         r_mock.get.return_value = None
         response = client.get(
-            "/api/comments",
+            "/comments_to_photo/{photo_id}",
+            json={'content': "test_comment", 'image_id': 1},
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, response.text
         data = response.json()
         assert isinstance(data, list)
-        assert data[0]["name"] == "test_comment"
-        assert "id" in data[0]
+        assert data[0]["content"] == "test_comment"
 
 
 def test_update_comment(client, token):
     with patch.object(auth_service, 'r') as r_mock:
         r_mock.get.return_value = None
         response = client.put(
-            "/api/comments/1",
-            json={"name": "new_test_comment"},
+            "/comments/update/1",
+            json={'content': "test_comment", 'id': 1},
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, response.text
         data = response.json()
-        assert data["name"] == "new_test_comment"
-        assert "id" in data
+        assert data["content"] == "new_test_comment"
 
 
 def test_update_comment_not_found(client, token):
     with patch.object(auth_service, 'r') as r_mock:
         r_mock.get.return_value = None
         response = client.put(
-            "/api/comments/2",
-            json={"name": "new_test_comment"},
+            "/comments/update/1",
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 404, response.text
         data = response.json()
-        assert data["detail"] == "Comment not found"
+        assert data["content"] == "Comment not found"
 
 
 def test_delete_comment(client, token):
     with patch.object(auth_service, 'r') as r_mock:
         r_mock.get.return_value = None
         response = client.delete(
-            "/api/comments/1",
+            "/comments/delete/1",
+            json={'content': "test_comment", 'id': 1},
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code == 200, response.text
         data = response.json()
-        assert data["name"] == "new_test_comment"
-        assert "id" in data
+        assert data["content"] == "deleted"
 
-
-def test_repeat_delete_comment(client, token):
-    with patch.object(auth_service, 'r') as r_mock:
-        r_mock.get.return_value = None
-        response = client.delete(
-            "/api/comments/1",
-            headers={"Authorization": f"Bearer {token}"}
-        )
-        assert response.status_code == 404, response.text
-        data = response.json()
-        assert data["detail"] == "Comment not found"

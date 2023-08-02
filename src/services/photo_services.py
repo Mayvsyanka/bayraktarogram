@@ -8,6 +8,7 @@ load_dotenv() # take environment variables from .env.
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+from src.conf.config import settings
 
 # Import to format the JSON responses
 # ==============================
@@ -23,7 +24,10 @@ config = cloudinary.config(secure=True)
 
 # Log the configuration
 # ==============================
-print("****1. Set up and configure the SDK:****\nCredentials: ", config.cloud_name, config.api_key, "\n")
+
+print("****1. Set up and configure the SDK:****\nCredentials: ",
+      settings.cloudinary_name, settings.cloudinary_api_key, "\n")
+
 
 
 def uploadImage(src_url, public_id):

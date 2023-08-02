@@ -36,9 +36,9 @@ async def get_image(id: int, db: Session = Depends(get_db),
     :return: A dictionary with the image and comments
     """
     
-    user_image, comments = await images.get_image(db, id, current_user)
+    user_image, comments, ratings = await images.get_image(db, id, current_user)
 
-    return {"image": user_image, "comments": comments}
+    return {"image": user_image, "comments": comments, "ratings": ratings}
 
 
 @router.put("/update_description/{image_id}", response_model=ImageUpdateDescrResponse, 

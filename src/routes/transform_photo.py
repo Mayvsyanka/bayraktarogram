@@ -1,5 +1,4 @@
 
-
 from typing import List
 import os
 
@@ -17,6 +16,7 @@ from src.services.auth import auth_service
 from src.services.roles import allowed_operation_everyone
 from src.repository import transform_photo
 from src.repository.transform_photo import get_transformed_url, create_transformed_photo_url, get_transformed_qrcode
+
 from src.conf.config import settings
 
 from dotenv import find_dotenv, load_dotenv
@@ -26,6 +26,7 @@ router = APIRouter(prefix='/transform_photo', tags=["transform_photo"])
 
 
 @router.post('/transformations/add', response_model=ImageSettingsResponseModel, status_code=status.HTTP_201_CREATED, dependencies=[Depends(allowed_operation_everyone)])
+
 async def create_transformed_photo_url(body:ImageSettingsModel, db: Session = Depends(get_db), current_user: User = Depends(auth_service.get_current_user)):
     """
     The create_transformed_photo_url function creates a transformed photo url.
@@ -61,6 +62,7 @@ async def get_transformed_photos(id: int, db: Session = Depends(get_db),
     :param current_user: User: Get the current user
     :return: The transformed_url value
     :doc-author: Trelent
+
     """    
     # config = cloudinary.config(secure=True) 
     # cloudinary.config(
@@ -85,17 +87,6 @@ async def get_transformed_qrcode(id: int, db: Session = Depends(get_db),current_
     :param db: Session: Pass the database connection to the function
     :param current_user: User: Get the current user's id
     :return: The transformed qrcode_url of a given qrcode_url id
-    :doc-author: Trelent
-    """
-    """
-    The get_transformed_qrcode function returns the transformed qrcode_url of a given qrcode_url id.
-        The function takes in an integer representing the id of a given qrcode_url and returns a dictionary containing 
-        the transformed url for that particular image.
-    
-    :param qrcode_url_id: int: Identify the qrcode_url in the database
-    :param db: Session: Pass the database connection to the function
-    :param current_user: User: Get the current user's id
-    :return: The following error:
     :doc-author: Trelent
     """
     qrcode_url = await transform_photo.get_transformed_qrcode(db, id, current_user)     

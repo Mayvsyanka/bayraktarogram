@@ -18,7 +18,6 @@ async def update_user(email, role: Role, db: Session):
     :return: A user object with the updated role
     :rtype: User
     """
-
     user = await get_user_by_email(email, db)
     user.roles = role
     db.commit()
@@ -36,4 +35,5 @@ async def unblock_user(email: str, db: Session):
     user = await get_user_by_email(email, db)
     user.access = True
     db.commit()
-    return (f"User {email} is banned now")
+    return (f"User {email} is not banned now")
+
