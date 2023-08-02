@@ -174,13 +174,12 @@ class AverageRatingResponse(BaseModel):
         orm_mode = True
 
 
-
-class ImageSettingsModel (BaseModel):  # for Cloudinary
+class ImageSettingsModel(BaseModel):  # POST
     # relations
+    # id: int = Field(..., example=1)
     user_id: int = Field(..., example=1)
     image_id: int = Field(..., example=1)
-    # url
-    url: str = Field(..., example="https://res.cloudinary.com/dhjzilr2j/image/upload/v1626406216/quickstart_butterfly.jpg")
+
     transformation: List[Dict[str, str]] = Field(..., example=[{"radius": "max"}, {"effect": "sepia"}, {"width": "500"}, {
                                                  "height": "500"}, {"crop": "fill"}, {"gravity": "face"}, {"color_space": "srgb"}, {"angle": "0"}])
 
